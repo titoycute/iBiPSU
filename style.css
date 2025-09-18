@@ -59,7 +59,7 @@ body {
 }
 
 .pride-gradient-bg {
-  background: linear-gradient(135deg, #ffff00, #c5c200, #f1ff29);
+  background: linear-gradient(135deg, yellow, #c5c200, yellow);
 }
 
 .pride-gradient-text {

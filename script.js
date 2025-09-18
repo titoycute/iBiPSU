@@ -1478,11 +1478,13 @@ this.stopDailyRewardTimer = () => {
 
     auth: () => `
             <div class="relative h-full">
+            <!--
                 <div class="absolute top-0 right-0">
                     <button onclick="app.navigateTo('about')" class="p-2 rounded-full bg-gray-700/50 hover:bg-gray-600/50 transition-colors">
                         <i data-lucide="info" class="w-6 h-6 text-white"></i>
                     </button>
                 </div>
+                -->
                 <div class="text-center">
                     <img src="bipsu_new-min.ico" alt="BBGS Logo" class="w-24 h-24 rounded-2xl mx-auto mb-4 object-cover">
                     <h1 class="text-3xl font-bold mb-2">Welcome to <span class="pride-gradient-text">iBiPSU Pass</span></h1>
@@ -1537,10 +1539,12 @@ this.stopDailyRewardTimer = () => {
 
         <!-- START: Added App Notice Section -->
         <div x-data="{ showNotice: false }" class="pt-2 text-center">
+            <!--
             <p class="text-xs text-gray-500 italic">
                 App not on Google Play / App Store? 
                 <button type="button" @click="showNotice = !showNotice" class="text-blue-400 underline hover:text-blue-300">Find out why</button>
             </p>
+            -->
             
             <div x-show="showNotice" style="display: none;" class="mt-3 text-left p-3 bg-gray-800 rounded-lg border border-gray-700">
 
@@ -1571,12 +1575,14 @@ this.stopDailyRewardTimer = () => {
             <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;" src="https://www.canva.com/design/DAGyyOxfOro/C22eWaeHJAsyy3SSkP89vA/watch?embed&autoplay=1"></iframe>
         </div>
         -->
+        <!--
        <div class="text-center my-8">
     <a href="https://www.facebook.com/bbgsofficial" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-blue-600 text-white px-3 py-1.5 rounded-md font-semibold hover:bg-blue-700 transition-colors shadow-md text-xs">
         <i data-lucide="facebook" class="w-4 h-4"></i>
         <span>Follow Us</span>
     </a>
     </div>
+    -->
     </form>
 </div>
                     
@@ -1647,7 +1653,7 @@ this.stopDailyRewardTimer = () => {
                 class="h-4 w-4 mt-1 accent-pink-600 border-gray-500 rounded focus:ring-pink-500"
             >
             <label for="terms" class="ml-2 text-sm text-gray-400">
-                I agree to the <a href="#" onclick="event.preventDefault(); app.showTermsModal()" class="text-pink-400 hover:underline">Terms and Conditions</a>.
+                I agree to the <a href="#" onclick="event.preventDefault(); app.showTermsModal()" class="text-yellow-400 hover:underline">Terms and Conditions</a>.
             </label>
         </div>
         <!-- END: Added Terms & Conditions Checkbox -->
