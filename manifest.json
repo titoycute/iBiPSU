@@ -8,14 +8,15 @@
   "description": "Connecting Our Community, One Scan at a Time.",
   "icons": [
     {
-      "src": "bipsu_new-min.ico",
+      "src": "bipsu_new-min.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "bipsu_new-min.ico",
+      "src": "bipsu_new-min.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
+
 }
