@@ -1594,7 +1594,7 @@ this.stopDailyRewardTimer = () => {
             <input name="lastName" type="text" placeholder="Last Name*" required class="w-full bg-gray-700 rounded-lg p-3">
             
         </div>
-<input name="preferredName" type="text" placeholder="Preferred Name" class="w-full bg-gray-700 rounded-lg p-3">
+<input name="studentid" type="text" placeholder="Student ID" class="w-full bg-gray-700 rounded-lg p-3">
         <!-- START: New Inclusive Fields -->
         <div>
             <label class="text-sm text-gray-400">Pronouns*</label>
@@ -2306,8 +2306,8 @@ this.stopDailyRewardTimer = () => {
                    <!-- New Subheading -->
                     <h4 class="text-sm font-bold text-gray-400 border-b border-gray-600 pb-1">Public Information</h4>
                     
-                    <div><label class="text-sm text-gray-400">Preffered Name</label><input name="preferredName" value="${
-                      user.preferredName
+                    <div><label class="text-sm text-gray-400">Student ID ##-##-#####</label><input name="studentid" value="${
+                      user.studentid
                     }" class="w-full bg-gray-700 rounded-lg p-3 mt-1"></div>
                     
                     <div class="grid grid-cols-2 gap-4">
@@ -4999,6 +4999,7 @@ this.showTermsModal = () => {
         lastName: newUser.lastName,
         middleName: newUser.middleName || "",
         preferredName: newUser.preferredName || "",
+        studentid: newUser.studentid || "",
         suffix: newUser.suffix || "",
         skills: newUser.skills || "",
         contact: newUser.contact || "",
@@ -5199,7 +5200,7 @@ this.handleProfilePicChange = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const updatedData = {
-      preferredName: formData.get("preferredName"),
+      studentid: formData.get("studentid"),
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       skills: formData.get("skills"),
@@ -6370,7 +6371,7 @@ this.handleSubmitAnnouncement = async (e) => {
     const content = `<div class="text-center space-y-4"><img src="${user.profilePic }" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-purple-500">
     
     <h2 class="text-2xl font-bold">${user.firstName} ${user.lastName}</h2>
-    <h4 class="text-l font-bold">Preffered Name: ${user.preferredName || user.firstName} </h4>
+    <h4 class="text-l font-bold">Student ID: ${user.studentid || user.firstName} </h4>
     <p>${user.pronouns || ""}  | ${user.gender ||""}  | ${user.orientation || ""}</p>
     <p class="text-gray-400">${user.skills || "No skills listed"}</p>
     <div class="flex items-center justify-center space-x-2"">
