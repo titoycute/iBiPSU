@@ -8,15 +8,14 @@
   "description": "Connecting Our Community, One Scan at a Time.",
   "icons": [
     {
-      "src": "bipsu_new-min.png",
+      "src": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjye17-91c8fb18-4240-4f6d-8e02-2efcfaf4a43b.png/v1/fill/w_1280,h_1234/bipsu_new_min_by_titoycute_dkjye17-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTIzNCIsInBhdGgiOiIvZi8yMzZlY2Y5Ni1hODgxLTQyOGQtOTIxMy04M2QxYzczMTMxMzEvZGtqeWUxNy05MWM4ZmIxOC00MjQwLTRmNmQtOGUwMi0yZWZjZmFmNGE0M2IucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.U2eh-dN7sP8m2Vc2bI10hK1dg9kTpliebRK6zozSd4o",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "bipsu_new-min.png",
+      "src": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjye17-91c8fb18-4240-4f6d-8e02-2efcfaf4a43b.png/v1/fill/w_1280,h_1234/bipsu_new_min_by_titoycute_dkjye17-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTIzNCIsInBhdGgiOiIvZi8yMzZlY2Y5Ni1hODgxLTQyOGQtOTIxMy04M2QxYzczMTMxMzEvZGtqeWUxNy05MWM4ZmIxOC00MjQwLTRmNmQtOGUwMi0yZWZjZmFmNGE0M2IucG5nIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.U2eh-dN7sP8m2Vc2bI10hK1dg9kTpliebRK6zozSd4o",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
-
 }
