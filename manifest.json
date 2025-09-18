@@ -1,6 +1,6 @@
 {
-  "name": "Pride Pass",
-  "short_name": "Pride Pass",
+  "name": "iBiPSU Pass",
+  "short_name": "iBiPSU Pass",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1f2937",
@@ -8,12 +8,12 @@
   "description": "Connecting Our Community, One Scan at a Time.",
   "icons": [
     {
-      "src": "https://tinyurl.com/pridepasslogo",
+      "src": "bipsu_new-min.ico",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://tinyurl.com/pridepasslogo",
+      "src": "bipsu_new-min.ico",
       "sizes": "512x512",
       "type": "image/png"
     }
