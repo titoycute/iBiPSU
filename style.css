@@ -1,0 +1,716 @@
+/* Custom font and base styling */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+body {
+  font-family: "Inter", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#admin-map {
+  width: 100%;
+  height: 30vh; /* Use 60% of the viewport height for responsiveness */
+  min-height: 300px; /* Ensure it's never smaller than 300px */
+  position: relative; /* Helps with internal map element positioning */
+  z-index: 1; /* Prevents it from being hidden behind other elements */
+  
+}
+
+
+
+#app {
+  position: relative;
+  z-index: 1;
+}
+
+#messages-container {
+  height: 60vh; /* 70% of the viewport height */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-back-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50; /* Ensure it's above other content */
+  background-color: rgba(98, 127, 0, 0.8); /* Semi-transparent background */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  color: white;
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
+  border-radius: 9999px; /* Fully rounded */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+.unsend-button {
+    /* Basic styling for the unsend button */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.floating-back-button:hover {
+  background-color: rgba(255, 234, 0, 0.9);
+}
+
+.pride-gradient-bg {
+  background: linear-gradient(135deg, #ffff00, #c5c200, #f1ff29);
+}
+
+.pride-gradient-text {
+  background: linear-gradient(135deg, #ffff00, #fcffcb, #f1ff29);
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* Standard property for compatibility */
+  -webkit-text-fill-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeInItem {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-item {
+  animation: fadeInItem 0.5s ease-out forwards;
+}
+
+/* --- Theme Styles --- */
+
+/* Default Theme */
+body.theme-default {
+  background-color: #0c133e;
+}
+
+body.theme-default #app {
+  background-color: #0058d3;
+  color: #ffffff;
+  background-image: url("https://images.unsplash.com/photo-1614850523011-8f49ffc73908?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z3JhZGllbnQlMjBibHVlfGVufDB8fDB8fHww");
+  background-size: cover;
+  background-position: center;
+}
+
+body.theme-default .chat-bubble-sender { background-color: #4f46e5 !important; }
+body.theme-default .chat-send-button { background-color: #4f46e5 !important; }
+
+body.theme-default .bg-gray-700 {
+  background-color: #000e90;
+}
+
+body.theme-default .bg-gray-800 {
+  background-color: #000e90;
+}
+
+body.theme-default .bg-gray-900 {
+  background-color: #000b55;
+}
+
+body.theme-default .bg-gray-900\/50 {
+  background-color: rgba(17, 24, 39, 0.5);
+}
+
+body.theme-default .text-gray-300 {
+  color: #d1d5db;
+}
+
+body.theme-default .text-gray-400 {
+  color: #9ca3af;
+}
+
+
+body.theme-rainbow #video-background-container {
+  display: block;
+}
+
+body.theme-rainbow #app {
+  background-color: rgba(255, 255, 255, 0.6);
+  background-image: url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkdu4if-1aed848a-3318-4cb9-af9f-338013f9960c.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzIzNmVjZjk2LWE4ODEtNDI4ZC05MjEzLTgzZDFjNzMxMzEzMVwvZGtkdTRpZi0xYWVkODQ4YS0zMzE4LTRjYjktYWY5Zi0zMzgwMTNmOTk2MGMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.S-HYO2Nr6J8r2MPfGhoVfsXFuFnuIgjkCK1Ed-4ZtzM");
+  background-size: cover;
+  background-position: center;
+  /* Dark overlay for readability */
+}
+
+body.theme-rainbow .pride-gradient-bg,
+body.theme-rainbow .accent-pink-500 {
+  background: linear-gradient(
+    135deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  accent-color: violet;
+}
+
+body.theme-rainbow .pride-gradient-text,
+body.theme-rainbow .text-pink-400,
+body.theme-rainbow .text-purple-400,
+body.theme-rainbow .text-amber-400,
+body.theme-rainbow .text-green-400,
+body.theme-rainbow .text-red-400,
+body.theme-rainbow .text-blue-400 {
+  background: linear-gradient(
+    135deg,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-rainbow .border-pink-500,
+body.theme-rainbow .border-purple-500 {
+  border-image: linear-gradient(
+      135deg,
+      red,
+      orange,
+      yellow,
+      green,
+      blue,
+      indigo,
+      violet
+    )
+    1;
+}
+
+/* Rainbow-Linear Overrides */
+body.theme-rainbow2 {
+  background: linear-gradient(45deg, #ff00b3, #0084ff, #0099ff);
+  background-size: 400% 400%;
+  animation: rainbow-bg 15s ease infinite;
+}
+
+@keyframes rainbow-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body.theme-rainbow2 #app {
+    background-image: url("https://i.pinimg.com/1200x/d4/47/07/d44707c4a1f544cca23c2e1d72646b6d.jpg");
+ 
+  background: linear-gradient(45deg, #ff00b3, #0084ff, #0099ff);
+  background-size: 400% 100%;
+  animation: rainbow-bg 15s ease infinite;
+  /* background-size: cover;
+    background-position: center; */
+}
+
+body.theme-rainbow2 #app-header,
+body.theme-rainbow2 #app-nav,
+body.theme-rainbow2 .modal-fade-in,
+body.theme-rainbow2 .bg-gray-900\/50,
+body.theme-rainbow2 .bg-gray-700,
+body.theme-rainbow2 .bg-gray-800,
+body.theme-rainbow2 .bg-gray-900 {
+  background-color: #001d3f !important;
+}
+
+body.theme-rainbow2 .text-white {
+  color: #ff67e6 !important;
+}
+
+body.theme-rainbow2 .text-gray-300,
+body.theme-rainbow2 .text-gray-400 {
+  color: #eb88ff !important;
+}
+
+body.theme-rainbow2 .pride-gradient-text,
+body.theme-rainbow2 .text-pink-400,
+body.theme-rainbow2 .text-purple-400,
+body.theme-rainbow2 .text-amber-400,
+body.theme-rainbow2 .text-green-400,
+body.theme-rainbow2 .text-red-400,
+body.theme-rainbow2 .text-blue-400 {
+  color: #ff00dd !important;
+  background: none;
+  -webkit-text-fill-color: unset;
+}
+
+body.theme-rainbow2 .pride-gradient-bg,
+body.theme-rainbow2 .accent-pink-500 {
+  background: #00c3ff !important;
+  accent-color: #ff62e5 ;
+}
+
+body.theme-rainbow2 .border-pink-500,
+body.theme-rainbow2 .border-purple-500 {
+  border-color: #ff1fda !important;
+}
+
+/* Light Theme Overrides */
+body.theme-light {
+  background-color: #e5e7eb !important;
+}
+
+body.theme-light #app {
+  background-color: #f3f4f6 !important;
+  background-image: url("https://i.pinimg.com/736x/89/27/30/89273078173e894d00701aee921cdaea.jpg");
+  color: #272300 !important;
+  background-size: cover;
+  background-position: center;
+
+
+}
+
+body.theme-light #app-header,
+body.theme-light #app-nav,
+body.theme-light .modal-fade-in,
+body.theme-light .bg-gray-900\/50,
+body.theme-light .bg-gray-700,
+body.theme-light .bg-gray-800,
+body.theme-light .bg-gray-900 {
+  background-color: #e5e7eb !important;
+}
+
+body.theme-light .text-white {
+  color: #302f00 !important;
+}
+
+body.theme-light .text-gray-300,
+body.theme-light .text-gray-400 {
+  color: #585700 !important;
+}
+
+body.theme-light .pride-gradient-text,
+body.theme-light .text-pink-400,
+body.theme-light .text-purple-400,
+body.theme-light .text-amber-400,
+body.theme-light .text-green-400,
+body.theme-light .text-red-400,
+body.theme-light .text-blue-400 {
+  color: #ad8500 !important;
+  background: none;
+  -webkit-text-fill-color: unset;
+}
+
+body.theme-light .pride-gradient-bg,
+body.theme-light .accent-pink-500 {
+  background: #ad8500 !important;
+  accent-color: #ad8500;
+}
+
+body.theme-light .border-pink-500,
+body.theme-light .border-purple-500 {
+  border-color: #ad8500 !important;
+}
+
+/* Blue Theme Overrides */
+body.theme-blue {
+  background-color: #1e3a8a !important;
+}
+
+body.theme-blue #app {
+  background-color: #1e3a8a !important;
+  background-image: url(" https://i.pinimg.com/1200x/46/fb/a9/46fba9944f3af578a9d831bbe7971deb.jpg");
+  color: #ffffff !important;
+  background-size: cover;
+  background-position: center;
+}
+
+body.theme-blue #app-header,
+body.theme-blue #app-nav,
+body.theme-blue .modal-fade-in,
+body.theme-blue .bg-gray-900\/50,
+body.theme-blue .bg-gray-700,
+body.theme-blue .bg-gray-800,
+body.theme-blue .bg-gray-900 {
+  background-color: #1e40af !important;
+}
+
+body.theme-blue .text-white {
+  color: #eff6ff !important;
+}
+
+body.theme-blue .text-gray-300,
+body.theme-blue .text-gray-400 {
+  color: #dbeafe !important;
+}
+
+body.theme-blue .pride-gradient-text,
+body.theme-blue .text-pink-400,
+body.theme-blue .text-purple-400,
+body.theme-blue .text-amber-400,
+body.theme-blue .text-green-400,
+body.theme-blue .text-red-400,
+body.theme-blue .text-blue-400 {
+  color: #60a5fa !important;
+  background: none;
+  -webkit-text-fill-color: unset;
+}
+
+body.theme-blue .pride-gradient-bg,
+body.theme-blue .accent-pink-500 {
+  background: #60a5fa !important;
+  accent-color: #60a5fa;
+}
+
+body.theme-blue .border-pink-500,
+body.theme-blue .border-purple-500 {
+  border-color: #60a5fa !important;
+}
+
+/* Green Theme Overrides */
+body.theme-green {
+  background-color: #064e3b !important;
+}
+
+body.theme-green #app {
+  background-image: url("  https://i.pinimg.com/736x/87/3d/90/873d90d90227a19d005d6c9c74de8d76.jpg");
+  background-color: #064e3b !important;
+  color: #ecfdf5 !important;
+}
+
+body.theme-green #app-header,
+body.theme-green #app-nav,
+body.theme-green .modal-fade-in,
+body.theme-green .bg-gray-900\/50,
+body.theme-green .bg-gray-700,
+body.theme-green .bg-gray-800,
+body.theme-green .bg-gray-900 {
+  background-color: #0a2e16 !important;
+}
+
+body.theme-green .text-white {
+  color: #ecfdf5 !important;
+}
+
+body.theme-green .text-gray-300,
+body.theme-green .text-gray-400 {
+  color: #d1fae5 !important;
+}
+
+body.theme-green .pride-gradient-text,
+body.theme-green .text-pink-400,
+body.theme-green .text-purple-400,
+body.theme-green .text-amber-400,
+body.theme-green .text-green-400,
+body.theme-green .text-red-400,
+body.theme-green .text-blue-400 {
+  color: #5cff6a !important;
+  background: none;
+  -webkit-text-fill-color: unset;
+}
+
+body.theme-green .pride-gradient-bg,
+body.theme-green .accent-pink-500 {
+  background: #00d435 !important;
+  accent-color: #00ff55;
+}
+
+body.theme-green .border-pink-500,
+body.theme-green .border-purple-500 {
+  border-color: #00f351 !important;
+}
+
+/* Pink Theme Overrides */
+body.theme-pink {
+  background-color: #8318439a !important;
+}
+
+body.theme-pink #app {
+  color: #fce7f3 !important;
+  background-color: #d12a6d !important;
+  color: #fce7f3 !important;
+  background-image: url(" https://i.pinimg.com/736x/69/38/e4/6938e42485cf0eaf14ac0e9848fd0e0f.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+body.theme-pink #app-header,
+body.theme-pink #app-nav,
+body.theme-pink .modal-fade-in,
+body.theme-pink .bg-gray-900\/50,
+body.theme-pink .bg-gray-700,
+body.theme-pink .bg-gray-800,
+body.theme-pink .bg-gray-900 {
+  background-color: #9d174dbb !important;
+}
+
+body.theme-pink .text-white {
+  color: #fce7f3 !important;
+}
+
+body.theme-pink .text-gray-300,
+body.theme-pink .text-gray-400 {
+  color: #fbcfe8 !important;
+}
+
+body.theme-pink .pride-gradient-text,
+body.theme-pink .text-pink-400,
+body.theme-pink .text-purple-400,
+body.theme-pink .text-amber-400,
+body.theme-pink .text-green-400,
+body.theme-pink .text-red-400,
+body.theme-pink .text-blue-400 {
+  color: #f472b6 !important;
+  background: none;
+  -webkit-text-fill-color: unset;
+}
+
+body.theme-pink .pride-gradient-bg,
+body.theme-pink .accent-pink-500 {
+  background: #f472b6 !important;
+  accent-color: #f472b6;
+}
+
+body.theme-pink .border-pink-500,
+body.theme-pink .border-purple-500 {
+  border-color: #f472b6 !important;
+}
+
+/* --- UNIVERSAL CHAT THEME STYLES --- */
+
+/* This sets the default colors if no theme is active */
+
+/* --- DEFINITIVE CHAT THEME STYLES --- */
+
+/* 1. Default Bubble Colors (Fallback) */
+.chat-bubble-sender {
+  background-color: #d12a6d; /* Default Pink */
+  color: white;
+}
+.chat-bubble-receiver {
+  background-color: #374151; /* Default Gray */
+  color: white;
+}
+.chat-send-button {
+    background-color: #d12a6d; /* Default Pink */
+}
+
+
+/* 2. Theme-Specific Overrides */
+/* This section applies the correct colors based on the body class */
+
+/* Default Theme */
+
+
+/* White Golden Theme */
+body.theme-light .chat-bubble-sender { background-color: #ca8a04 !important; }
+body.theme-light .chat-bubble-receiver { background-color: #94a3b8 !important; color: #1e293b !important; }
+body.theme-light .chat-send-button { background-color: #ca8a04 !important; }
+
+/* Blue Spectrum Theme */
+body.theme-blue .chat-bubble-sender { background-color: #2563eb !important; }
+body.theme-blue .chat-send-button { background-color: #2563eb !important; }
+
+/* IbidAko Theme */
+body.theme-green .chat-bubble-sender { background-color: #047857 !important; }
+body.theme-green .chat-send-button { background-color: #047857 !important; }
+
+/* Pink Sparkle Theme */
+body.theme-pink-sparkle .chat-bubble-sender { background-color: #db2777 !important; }
+body.theme-pink-sparkle .chat-send-button { background-color: #db2777 !important; }
+
+/* DasigNaval Theme */
+body.theme-rainbow2 .chat-bubble-sender { background-color: #db2777 !important; }
+body.theme-rainbow2 .chat-send-button { background-color: #8a0067 !important; }
+
+/* Digital Theme */
+body.theme-rainbow .chat-bubble-sender { background-color: rgb(36, 36, 36) !important; }
+body.theme-rainbow .chat-bubble-receiver { background-color: #474747 !important; }
+body.theme-rainbow .chat-send-button { background-color: #167ba3 !important; }
+
+
+/* Daily Rewards Theming */
+.reward-box-claimed {
+    background-color: #f59e0b !important; /* Default: Amber */
+    border-color: #f59e0b !important;
+}
+
+.reward-box-claimable {
+    background-color: #22c55e !important; /* Default: Green */
+    border-color: #22c55e !important;
+}
+
+/* White Golden Theme */
+body.theme-light .reward-box-claimed { background-color: #ca8a04 !important; border-color: #ca8a04 !important; }
+body.theme-light .reward-box-claimable { background-color: #65a30d !important; border-color: #65a30d !important; }
+
+/* Blue Spectrum Theme */
+body.theme-blue .reward-box-claimed { background-color: #3b82f6 !important; border-color: #3b82f6 !important; }
+body.theme-blue .reward-box-claimable { background-color: #14b8a6 !important; border-color: #14b8a6 !important; }
+
+/* IbidAko Theme */
+body.theme-green .reward-box-claimed { background-color: #f97316 !important; border-color: #f97316 !important; }
+body.theme-green .reward-box-claimable { background-color: #16a34a !important; border-color: #16a34a !important; }
+
+/* Pink Sparkle Theme */
+body.theme-pink .reward-box-claimed { background-color: #ec4899 !important; border-color: #ec4899 !important; }
+body.theme-pink .reward-box-claimable { background-color: #d946ef !important; border-color: #d946ef !important; }
+
+/* DasigNaval Theme */
+body.theme-rainbow2 .reward-box-claimed { background-color: #f97316 !important; border-color: #f97316 !important; }
+body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important; border-color: #16a34a !important; }
+
+/* in style.css */
+/* --- Image Carousel Styles (Full Width) --- */
+.carousel-container {
+  display: flex;
+  overflow-x: auto; /* Allows horizontal scrolling */
+  scroll-snap-type: x mandatory; /* Snaps to each item */
+  width: 100%; /* Ensures the container is full-width */
+  scrollbar-width: none; /* Hides scrollbar for Firefox */
+  -ms-overflow-style: none;  /* Hides scrollbar for IE and Edge */
+}
+
+/* Hides scrollbar for Chrome, Safari and Opera */
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  flex: 0 0 100%; /* Each item takes up 100% of the width */
+  scroll-snap-align: start;
+  overflow: hidden;
+  height: 15vh; /* Sets height to 30% of the viewport height */
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.carousel-item:active {
+  transform: scale(0.98); /* Slightly adjusted press effect for full-width */
+}
+
+/* --- Carousel Arrow Button Styles --- */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: rgba(30, 30, 30, 0.5);
+  backdrop-filter: blur(4px);
+  color: white;
+  border-radius: 9999px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.carousel-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-arrow.left-0 {
+  left: 16px;
+}
+
+.carousel-arrow.right-0 {
+  right: 16px;
+}
+
+/* Ensure Lucide icons inside are sized correctly */
+.carousel-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* in style.css */
+
+/* --- Announcement Page Styles --- */
+.announcement-item {
+  background-color: #374151; /* bg-gray-700 */
+  border-radius: 0.75rem; /* rounded-xl */
+  padding: 1rem; /* p-4 */
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.2s ease-in-out;
+  border-left: 4px solid transparent;
+}
+
+.announcement-item:hover {
+  border-left-color: #ec4899; /* A nice highlight color */
+}
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announcement-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out,
+  padding-top 0.5s ease-in-out;
+}
+
+/* State when the announcement is expanded */
+.announcement-item.expanded {
+  background-color: #4b5563; /* bg-gray-600 */
+}
+
+.announcement-item.expanded .announcement-content {
+  max-height: 500px; /* Adjust if your content is longer */
+  padding-top: 1rem;
+}
+
+/* Animate the chevron icon */
+.announcement-item .chevron-icon {
+  transition: transform 0.3s ease-in-out;
+}
+
+.announcement-item.expanded .chevron-icon {
+  transform: rotate(180deg);
+}
+

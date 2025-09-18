@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pride Pass</title>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://tinyurl.com/pridepasslogo"
+    />
+      
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Reaktime -->
+    <script type="module" src="script.js"></script> 
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- QR Code generation library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+    <!-- QR Code scanning library -->
+    <script src="https://unpkg.com/html5-qrcode@2.0.9/dist/html5-qrcode.min.js"></script>
+
+    <!-- Lucide Icons for UI elements -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- AlpineJS for UI interactions -->
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      defer
+    ></script>
+
+    <!-- Leaflet Map Library -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="bg-gray-900 text-white antialiased">
+    <div id="fb-root"></div>
+    <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"
+    ></script>
+    <div id="video-background-container"></div>
+    <div
+      id="app"
+      class="max-w-lg mx-auto min-h-screen bg-gray-800 shadow-2xl flex flex-col"
+    >
+      <!-- Loading Spinner -->
+      <div
+        id="loading-overlay"
+        class="absolute inset-0 bg-gray-800 z-50 flex flex-col items-center justify-center"
+      >
+        <img
+          src="bipsu_new-min.ico"
+          alt="BiPSU Logo"
+          class="w-24 h-24 rounded-2xl mb-4 animate-pulse"
+        />
+        <p id="loading-text" class="text-gray-400">
+          Connecting to BiPSU Pass App...
+        </p>
+      </div>
+
+      <!-- Header -->
+      <header
+        id="app-header"
+        class="p-4 flex justify-between items-center bg-gray-900/50 backdrop-blur-sm sticky top-0 z-20 hidden"
+      >
+        <div class="flex items-center space-x-3">
+          <img
+            src="bipsu_new-min.ico"
+            onerror="this.onerror=null;this.src='https://placehold.co/64x64/BE185D/FFFFFF?text=BBGS';"
+            alt="iBiPSU Pass Logo"
+            class="w-10 h-10 rounded-lg object-cover"
+          />
+          <h1 class="text-xl font-bold pride-gradient-text">iBiPSU Pass</h1>
+        </div>
+
+        <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" class="flex items-center space-x-2">
+            <div class="text-right">
+              <p id="user-name-header" class="font-semibold text-sm"></p>
+              <p
+                id="user-points-header"
+                class="text-xs text-amber-400 font-bold"
+              ></p>
+            </div>
+            <i data-lucide="user-round-cog" class="w-8 h-8"></i>
+          </button>
+          <div
+            x-show="open"
+            @click.away="open = false"
+            class="absolute right-0 mt-2 w-48 bg-gray-700 rounded-lg shadow-xl z-50"
+            style="display: none"
+          >
+            <a
+              href="#"
+              onclick="event.preventDefault(); app.navigateTo('profile')"
+              class="flex items-center px-4 py-2 text-white hover:bg-gray-600"
+              ><i data-lucide="user-circle" class="w-4 h-4 mr-2"></i>My
+              Profile</a
+            >
+            <a
+              href="#"
+              onclick="event.preventDefault(); app.navigateTo('badges')"
+              class="flex items-center px-4 py-2 text-l text-white hover:bg-gray-600"
+              ><i data-lucide="award" class="w-4 h-4 mr-2"></i>My Badges</a
+            >
+            <a
+              href="#"
+              onclick="event.preventDefault(); app.navigateTo('directory')"
+              class="flex items-center px-4 py-2 text-l text-white hover:bg-gray-600"
+              ><i data-lucide="users" class="w-4 h-4 mr-2"></i>Directory</a
+            >
+            <a
+              href="#"
+              onclick="app.handleLogout()"
+              class="flex items-center px-4 py-2 text-l text-white hover:bg-gray-600"
+              ><i data-lucide="log-out" class="w-4 h-4 mr-2"></i>Logout</a
+            >
+            <a
+              href="#"
+              onclick=" app.navigateTo('about')"
+              class="flex items-center px-4 py-2 text-l text-white hover:bg-gray-600"
+              ><i data-lucide="info" class="w-4 h-4 mr-2"></i>About</a
+            >
+            <a 
+              href="#" 
+              onclick="event.preventDefault(); window.location.reload();" class="flex items-center px-4 py-2 text-l text-white hover:bg-gray-600"
+              ><i data-lucide="refresh-ccw" class="w-4 h-4 mr-2"></i>Refresh App</a>
+  
+
+            <div id="admin-dropdown-link" class="hidden">
+              <div class="border-t border-gray-600 my-1"></div>
+              <a
+                href="#"
+                onclick="event.preventDefault(); app.navigateTo('admin')"
+                class="flex items-center px-4 py-2 text-xl text-white hover:bg-gray-600"
+                ><i data-lucide="shield" class="w-4 h-4 mr-2"></i>Admin Panel</a
+              >
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main
+        id="main-content"
+        class="flex-grow p-4 md:p-6 overflow-y-auto no-scrollbar"
+      >
+        <!-- All views will be rendered here -->
+      </main>
+
+      <!-- Navigation Bar -->
+      <nav
+        id="app-nav"
+        class="bg-gray-900/50 backdrop-blur-sm p-2 sticky bottom-0 z-20 hidden"
+      >
+        <div class="relative flex justify-around items-center h-16">
+          <button
+            onclick="app.navigateTo('dashboard')"
+            class="nav-button flex-1 flex flex-col items-center p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
+          >
+            <i data-lucide="home"></i><span class="text-xs mt-1">Home</span>
+          </button>
+          <button
+            onclick="app.navigateTo('events')"
+            class="nav-button flex-1 flex flex-col items-center p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
+          >
+            <i data-lucide="calendar-heart"></i
+            ><span class="text-xs mt-1">Events</span>
+          </button>
+
+           <div class="absolute left-1/2 -translate-x-1/2 -top-6">
+            <button
+              onclick="app.navigateTo('scanner')"
+              class="nav-button pride-gradient-bg w-20 h-20 flex items-center justify-center rounded-full shadow-lg text-white"
+            >
+              <i data-lucide="scan-line" class="w-8 h-8"></i>
+            </button>
+          </div> 
+          
+          <button
+            onclick="app.navigateTo('scanner')"
+            class="nav-button flex-1 flex flex-col items-center p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
+          >
+            <i data-lucide="scan-line"></i
+            ><span class="text-xs mt-1">Scan QR</span>
+          </button>
+
+          <button onclick="app.navigateTo('messages')" class="nav-button flex-1 flex flex-col items-center p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors">
+  <i data-lucide="message-square"></i><span class="text-xs mt-1">Messages</span>
+</button>
+
+
+          
+
+          <button
+            onclick="app.navigateTo('rewards')"
+            class="nav-button flex-1 flex flex-col items-center p-2 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors"
+          >
+            <i data-lucide="gift"></i><span class="text-xs mt-1">Reward List</span>
+          </button>
+          
+         
+        </div>
+      </nav>
+
+      <!-- Modals -->
+      <div
+        id="modal"
+        class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden"
+      >
+        <div
+          id="modal-content"
+          class="bg-gray-800 rounded-2xl p-6 w-full max-w-sm text-center shadow-xl modal-fade-in"
+        >
+          <div id="modal-icon" class="mx-auto mb-4"></div>
+          <h3 id="modal-title" class="text-xl font-bold mb-2"></h3>
+          <p id="modal-message" class="text-gray-300 mb-6"></p>
+          <div id="modal-buttons" class="flex flex-col space-y-2"></div>
+        </div>
+      </div>
+      <div
+        id="fullscreen-modal"
+        class="fixed inset-0 bg-gray-800 z-50 flex flex-col p-4 hidden"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="fullscreen-modal-title" class="text-xl font-bold"></h3>
+          <button
+            onclick="app.closeFullscreenModal()"
+            class="p-2 rounded-full bg-gray-700 hover:bg-gray-600"
+          >
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div
+          id="fullscreen-modal-content"
+          class="flex-grow overflow-y-auto no-scrollbar"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
