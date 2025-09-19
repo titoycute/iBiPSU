@@ -714,3 +714,96 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
   transform: rotate(180deg);
 }
 
+/* --- Circular Action Menu --- */
+.action-menu-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  height:300px;
+}
+
+.action-menu {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.action-menu-toggle {
+  width: 100%;
+  height: 100%;
+  background-color: #e8e800; /* Your app's primary green */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 20; /* Ensure it's on top */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative; /* To keep it in the flow */
+}
+
+.action-menu.open {
+  /* THIS IS THE ONLY NUMBER YOU NEED TO CHANGE!
+    Set it to 9, 7, 5, or any number of buttons you have.
+  */
+  --item-count: 7;
+
+  /* You can also adjust the size of the circle here */
+  --menu-radius: 100px; 
+}
+
+/* When the menu is open, rotate the '+' icon to an 'x' */
+.action-menu.open .action-menu-toggle {
+  transform: rotate(45deg);
+}
+
+.action-menu-item {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 48px;
+  height: 48px;
+  background-color: #374151;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+  transform: scale(0.5); /* Start small */
+  opacity: 0; /* Start invisible */
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* When the menu is open, make the items visible and clickable */
+.action-menu.open .action-menu-item {
+  opacity: 1;
+  pointer-events: auto;
+
+  /* This calculates the final position and rotates the item into place */
+  transform: rotate( calc( var(--i) * (360deg / var(--item-count)) - 90deg) ) 
+             translateY( calc(var(--menu-radius) * -1) );
+}
+
+.action-menu.open .action-menu-item > * {
+  transform: rotate( calc( (var(--i) * (360deg / var(--item-count)) - 90deg) * -1 ) );
+}
+
+/* For each item, we now apply BOTH scale(1) and translate(...)
+   in the same transform property. */
+.action-menu.open .action-menu-item:nth-child(1) { --i: 0; }
+.action-menu.open .action-menu-item:nth-child(2) { --i: 1; }
+.action-menu.open .action-menu-item:nth-child(3) { --i: 2; }
+.action-menu.open .action-menu-item:nth-child(4) { --i: 3; }
+.action-menu.open .action-menu-item:nth-child(5) { --i: 4; }
+.action-menu.open .action-menu-item:nth-child(6) { --i: 5; }
+.action-menu.open .action-menu-item:nth-child(7) { --i: 6; }
+.action-menu.open .action-menu-item:nth-child(8) { --i: 7; }
+.action-menu.open .action-menu-item:nth-child(9) { --i: 8; }

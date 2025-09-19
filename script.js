@@ -58,131 +58,136 @@ import {
 // --- Main Application Logic ---
 const DAILY_REWARD_POINTS = [10, 15, 20, 25, 100]; // Day 1, Day 2, Day 3, Day 4, Day 5
 const App = function () {
+  this.manageWakeLock = () => {
+    // Check if the Screen Wake Lock API is supported by the browser
+    if ("wakeLock" in navigator) {
+      const requestWakeLock = async () => {
+        try {
+          // Request a screen wake lock
+          this.state.wakeLockSentinel = await navigator.wakeLock.request(
+            "screen"
+          );
 
+          // Listen for when the lock is released (e.g., user switches tabs)
+          this.state.wakeLockSentinel.addEventListener("release", () => {
+            console.log("Screen Wake Lock was released.");
+            this.state.wakeLockSentinel = null; // Clear the sentinel
+          });
 
-this.manageWakeLock = () => {
-  // Check if the Screen Wake Lock API is supported by the browser
-  if ('wakeLock' in navigator) {
-    
-    const requestWakeLock = async () => {
-      try {
-        // Request a screen wake lock
-        this.state.wakeLockSentinel = await navigator.wakeLock.request('screen');
-        
-        // Listen for when the lock is released (e.g., user switches tabs)
-        this.state.wakeLockSentinel.addEventListener('release', () => {
-          console.log('Screen Wake Lock was released.');
-          this.state.wakeLockSentinel = null; // Clear the sentinel
-        });
-        
-        console.log('Screen Wake Lock is active.');
-      } catch (err) {
-        // This can happen if the user denies the request or for other reasons
-        console.error(`Could not acquire Wake Lock: ${err.name}, ${err.message}`);
-      }
-    };
+          console.log("Screen Wake Lock is active.");
+        } catch (err) {
+          // This can happen if the user denies the request or for other reasons
+          console.error(
+            `Could not acquire Wake Lock: ${err.name}, ${err.message}`
+          );
+        }
+      };
 
-    // Request the lock for the first time
-    requestWakeLock();
-    
-    // When the user comes back to the app, we need to re-acquire the lock.
-    // The browser automatically releases it when the tab is not visible.
-    document.addEventListener('visibilitychange', () => {
-      if (this.state.wakeLockSentinel === null && document.visibilityState === 'visible') {
-        console.log('Re-acquiring Screen Wake Lock after visibility change.');
-        requestWakeLock();
-      }
-    });
+      // Request the lock for the first time
+      requestWakeLock();
 
-  } else {
-    console.log('Screen Wake Lock API not supported on this browser.');
-  }
-};
+      // When the user comes back to the app, we need to re-acquire the lock.
+      // The browser automatically releases it when the tab is not visible.
+      document.addEventListener("visibilitychange", () => {
+        if (
+          this.state.wakeLockSentinel === null &&
+          document.visibilityState === "visible"
+        ) {
+          console.log("Re-acquiring Screen Wake Lock after visibility change.");
+          requestWakeLock();
+        }
+      });
+    } else {
+      console.log("Screen Wake Lock API not supported on this browser.");
+    }
+  };
 
- 
-// This function is called when the user clicks the "Edit" (pencil) icon
-this.handleEditClick = (id) => {
-  // Find the full announcement object from the state using its ID
-  const announcementToEdit = this.state.announcements.find(ann => ann.id === id);
+  // This function is called when the user clicks the "Edit" (pencil) icon
+  this.handleEditClick = (id) => {
+    // Find the full announcement object from the state using its ID
+    const announcementToEdit = this.state.announcements.find(
+      (ann) => ann.id === id
+    );
 
-  // If we didn't find the announcement, stop to prevent errors
-  if (!announcementToEdit) {
-    console.error("Could not find announcement to edit with ID:", id);
-    return;
-  }
+    // If we didn't find the announcement, stop to prevent errors
+    if (!announcementToEdit) {
+      console.error("Could not find announcement to edit with ID:", id);
+      return;
+    }
 
-  const form = document.getElementById('announcement-form');
-  const submitBtn = document.getElementById('announcement-submit-btn');
-  const cancelBtn = document.getElementById('cancel-edit-btn');
-  const formTitle = document.getElementById('announcement-form-title');
-  
-  // Populate the form using the data we found
-  form.elements.announcementId.value = announcementToEdit.id;
-  form.elements.announcementTitle.value = announcementToEdit.title;
-  form.elements.announcementMessage.value = announcementToEdit.message;
-  
-  // Change the UI to "Edit Mode"
-  formTitle.textContent = "Edit Announcement";
-  submitBtn.textContent = "Update Announcement";
-  cancelBtn.classList.remove('hidden'); // Show the cancel button
-  
-  // Scroll to the top of the page to show the form
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+    const form = document.getElementById("announcement-form");
+    const submitBtn = document.getElementById("announcement-submit-btn");
+    const cancelBtn = document.getElementById("cancel-edit-btn");
+    const formTitle = document.getElementById("announcement-form-title");
 
-// This function is called when the user clicks the "Cancel" button
-this.handleCancelEdit = () => {
-  const form = document.getElementById('announcement-form');
-  const submitBtn = document.getElementById('announcement-submit-btn');
-  const cancelBtn = document.getElementById('cancel-edit-btn');
-  const formTitle = document.getElementById('announcement-form-title');
+    // Populate the form using the data we found
+    form.elements.announcementId.value = announcementToEdit.id;
+    form.elements.announcementTitle.value = announcementToEdit.title;
+    form.elements.announcementMessage.value = announcementToEdit.message;
 
-  // Clear all form fields
-  form.reset();
-  form.elements.announcementId.value = '';
+    // Change the UI to "Edit Mode"
+    formTitle.textContent = "Edit Announcement";
+    submitBtn.textContent = "Update Announcement";
+    cancelBtn.classList.remove("hidden"); // Show the cancel button
 
-  // Change the UI back to "Create Mode"
-  formTitle.textContent = "Post New Announcement";
-  submitBtn.textContent = "Post Announcement";
-  cancelBtn.classList.add('hidden'); // Hide the cancel button
-};
-// in script.js, replace the existing scrollCarousel function
+    // Scroll to the top of the page to show the form
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-this.scrollCarousel = (direction) => {
-  const carousel = document.getElementById('dashboard-carousel');
-  if (carousel) {
+  // This function is called when the user clicks the "Cancel" button
+  this.handleCancelEdit = () => {
+    const form = document.getElementById("announcement-form");
+    const submitBtn = document.getElementById("announcement-submit-btn");
+    const cancelBtn = document.getElementById("cancel-edit-btn");
+    const formTitle = document.getElementById("announcement-form-title");
+
+    // Clear all form fields
+    form.reset();
+    form.elements.announcementId.value = "";
+
+    // Change the UI back to "Create Mode"
+    formTitle.textContent = "Post New Announcement";
+    submitBtn.textContent = "Post Announcement";
+    cancelBtn.classList.add("hidden"); // Hide the cancel button
+  };
+  // in script.js, replace the existing scrollCarousel function
+
+  this.scrollCarousel = (direction) => {
+    const carousel = document.getElementById("dashboard-carousel");
+    if (carousel) {
       const scrollAmount = carousel.clientWidth * direction;
 
       // Check if the carousel is at the very end
       // We add a small buffer (1px) to account for potential decimal values
-      const isAtEnd = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 1;
+      const isAtEnd =
+        carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 1;
 
       // Check if the carousel is at the very beginning
       const isAtStart = carousel.scrollLeft === 0;
 
       if (direction === 1 && isAtEnd) {
-          // If scrolling right at the end, loop to the beginning
-          carousel.scrollTo({
-              left: 0,
-              behavior: 'smooth'
-          });
+        // If scrolling right at the end, loop to the beginning
+        carousel.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
       } else if (direction === -1 && isAtStart) {
-          // If scrolling left at the beginning, loop to the end
-          carousel.scrollTo({
-              left: carousel.scrollWidth,
-              behavior: 'smooth'
-          });
+        // If scrolling left at the beginning, loop to the end
+        carousel.scrollTo({
+          left: carousel.scrollWidth,
+          behavior: "smooth",
+        });
       } else {
-          // Otherwise, just scroll normally
-          carousel.scrollBy({
-              left: scrollAmount,
-              behavior: 'smooth'
-          });
+        // Otherwise, just scroll normally
+        carousel.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
       }
-  }
-};
+    }
+  };
 
-  this.aboutAudio = null; 
+  this.aboutAudio = null;
   // --- STATE MANAGEMENT ---
   const currentDate = new Date();
   this.state = {
@@ -232,19 +237,20 @@ this.scrollCarousel = (direction) => {
     wakeLockSentinel: null,
   };
 
+  this.handleShowMoreDirectory = () => {
+    // Increase the number of users to display by 20
+    this.state.directoryDisplayCount += 20;
+    // Re-render the page to show the new users
+    this.render();
+  };
 
-
-this.handleShowMoreDirectory = () => {
-  // Increase the number of users to display by 20
-  this.state.directoryDisplayCount += 20;
-  // Re-render the page to show the new users
-  this.render();
-};
-
-//PROFILE CARD
-this.renderDashboardProfile = (user) => {
-  const earnedBadges = (user.earnedBadgeIds || []).map((badgeId) => this.state.badges.find((b) => b.id === badgeId)).filter(Boolean).slice(0, 10);
-  return `
+  //PROFILE CARD
+  this.renderDashboardProfile = (user) => {
+    const earnedBadges = (user.earnedBadgeIds || [])
+      .map((badgeId) => this.state.badges.find((b) => b.id === badgeId))
+      .filter(Boolean)
+      .slice(0, 10);
+    return `
     <div class="relative">
         
         
@@ -261,17 +267,27 @@ this.renderDashboardProfile = (user) => {
                 <!-- END: ADD THIS NEW TITLE SECTION -->
 
                 <div class="flex space-x-4 items-center">
-                    <img src="${user.profilePic}" class="w-20 h-20 rounded-full object-cover border-4 border-gray-700">
+                    <img src="${
+                      user.profilePic
+                    }" class="w-20 h-20 rounded-full object-cover border-4 border-gray-700">
                     <div class="flex-1">
-                        <h2 class="text-l font-bold">${user.firstName} ${user.lastName}</h2>
+                        <h2 class="text-l font-bold">${user.firstName} ${
+      user.lastName
+    }</h2>
                         <div class="flex items-center text-2xl font-bold pride-gradient-text mb-1">
                             <i data-lucide="circle-star" class="w-7 h-7 mr-2 pride-gradient-text"></i>
-                            <span>${user.points || 0}</span><span class="text-sm pride-gradient-text ml-1"> PTS</span>
+                            <span>${
+                              user.points || 0
+                            }</span><span class="text-sm pride-gradient-text ml-1"> PTS</span>
                             
                          
                             </div>
-                            <p class="text-[12px] pride-gradient-text">Points in Peso: ₱${((user.points || 0) / 50).toFixed(2)}</p>
-                        <p class="text-[10px] text-gray-400">${user.email || "N/A"}</p>
+                            <p class="text-[12px] pride-gradient-text">Points in Peso: ₱${(
+                              (user.points || 0) / 50
+                            ).toFixed(2)}</p>
+                        <p class="text-[10px] text-gray-400">${
+                          user.email || "N/A"
+                        }</p>
                         
                     </div>
                     <div class="bg-white p-1 rounded-lg cursor-pointer" onclick="app.openMemberQrModal()">
@@ -285,7 +301,10 @@ this.renderDashboardProfile = (user) => {
                     <div class="flex items-center justify-center space-x-3">
                         ${earnedBadges
                           .map((badge) =>
-                            this.renderBadgeIcon(badge.icon, "w-6 h-6 text-amber-400")
+                            this.renderBadgeIcon(
+                              badge.icon,
+                              "w-6 h-6 text-amber-400"
+                            )
                           )
                           .join("")}
                     </div>
@@ -295,59 +314,77 @@ this.renderDashboardProfile = (user) => {
             </div>
         </div>
     </div>`;
-};
+  };
 
+  // DASHBOARD CAROUSEL IMAGE
+  this.renderDashboardCarousel = () => {
+    const carouselItems = [
+      {
+        imageUrl:
+          "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzIwNW9pdzMyOTFna2ZjZ2V6dWZqMnJtNWg0N2x6NXJqdTQ4ZHN3MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TvG2o6Bob9saazDlu8/giphy.gif",
+        link: "rewards",
+      },
+      {
+        imageUrl:
+          "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjb4v0-af1ec6b9-6075-4a3c-b662-ed5512cb6fbf.png/v1/fit/w_800,h_450,q_70,strp/director_by_titoycute_dkjb4v0-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDUwIiwicGF0aCI6Ii9mLzIzNmVjZjk2LWE4ODEtNDI4ZC05MjEzLTgzZDFjNzMxMzEzMS9ka2piNHYwLWFmMWVjNmI5LTYwNzUtNGEzYy1iNjYyLWVkNTUxMmNiNmZiZi5wbmciLCJ3aWR0aCI6Ijw9ODAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.kIGGldx0F4f2G3KM_9AgMEk0QdiFctJP3vJbB8MhjOU",
+        link: "directory",
+      },
+      {
+        imageUrl:
+          "https://i.pinimg.com/1200x/fe/4d/a1/fe4da1dd4b4a61e5717ef1c73a169c99.jpg",
+        link: "leaderboard",
+      },
+    ];
 
-// DASHBOARD CAROUSEL IMAGE
-this.renderDashboardCarousel = () => {
-  const carouselItems = [
-    { imageUrl: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzIwNW9pdzMyOTFna2ZjZ2V6dWZqMnJtNWg0N2x6NXJqdTQ4ZHN3MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TvG2o6Bob9saazDlu8/giphy.gif", link: "rewards" },
-    { imageUrl: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjb4v0-af1ec6b9-6075-4a3c-b662-ed5512cb6fbf.png/v1/fit/w_800,h_450,q_70,strp/director_by_titoycute_dkjb4v0-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDUwIiwicGF0aCI6Ii9mLzIzNmVjZjk2LWE4ODEtNDI4ZC05MjEzLTgzZDFjNzMxMzEzMS9ka2piNHYwLWFmMWVjNmI5LTYwNzUtNGEzYy1iNjYyLWVkNTUxMmNiNmZiZi5wbmciLCJ3aWR0aCI6Ijw9ODAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.kIGGldx0F4f2G3KM_9AgMEk0QdiFctJP3vJbB8MhjOU", link: "directory" },
-    { imageUrl: "https://i.pinimg.com/1200x/fe/4d/a1/fe4da1dd4b4a61e5717ef1c73a169c99.jpg", link: "leaderboard" }
-  ];
-
-  return `
+    return `
     <div class="relative w-full">
         <div class="carousel-container" id="dashboard-carousel">
-            ${carouselItems.map(item => `
+            ${carouselItems
+              .map(
+                (item) => `
                 <div class="carousel-item" 
                      style="background-image: url('${item.imageUrl}')" 
                      onclick="app.navigateTo('${item.link}')">
                 </div>
-            `).join('')}
+            `
+              )
+              .join("")}
         </div>
         <button onclick="app.scrollCarousel(-1)" class="carousel-arrow left-0"><i data-lucide="chevron-left"></i></button>
         <button onclick="app.scrollCarousel(1)" class="carousel-arrow right-0"><i data-lucide="chevron-right"></i></button>
     </div>
   `;
-};
+  };
 
+  //DAILY REWARDS
+  this.renderDashboardDailyRewards = () => {
+    this.prepareLoginRewardState(this.state.loggedInUser);
+    const rewardState = this.state.loginReward || {
+      currentStreak: 0,
+      canClaim: false,
+    };
 
+    const rewardBoxes = [1, 2, 3, 4, 5]
+      .map((day) => {
+        const isClaimed = day <= rewardState.currentStreak;
+        const isClaimable =
+          rewardState.canClaim && day === rewardState.currentStreak + 1;
+        const points = DAILY_REWARD_POINTS[day - 1];
 
-//DAILY REWARDS
-this.renderDashboardDailyRewards = () => {
-  this.prepareLoginRewardState(this.state.loggedInUser);
-  const rewardState = this.state.loginReward || { currentStreak: 0, canClaim: false };
+        let boxClass = "bg-gray-700/50 border-2 border-gray-600";
+        // MINIMIZED: Text is smaller for a more compact look
+        let content = `<div class="font-bold text-gray-400 text-sm">${day}</div><div class="text-[10px] text-gray-500">${points} pts</div>`;
+        let onClick = "";
+        let finalHtml;
 
-  const rewardBoxes = [1, 2, 3, 4, 5].map((day) => {
-    const isClaimed = day <= rewardState.currentStreak;
-    const isClaimable = rewardState.canClaim && day === rewardState.currentStreak + 1;
-    const points = DAILY_REWARD_POINTS[day - 1];
-    
-    let boxClass = "bg-gray-700/50 border-2 border-gray-600";
-    // MINIMIZED: Text is smaller for a more compact look
-    let content = `<div class="font-bold text-gray-400 text-sm">${day}</div><div class="text-[10px] text-gray-500">${points} pts</div>`;
-    let onClick = "";
-    let finalHtml;
+        if (isClaimed) {
+          boxClass = "bg-yellow-500/30 border-2 border-yellow-500";
+          // MINIMIZED: Icon is smaller
+          content = `<i data-lucide="check-circle" class="w-6 h-6 text-yellow-400 mx-auto"></i>`;
 
-    if (isClaimed) {
-      boxClass = "bg-yellow-500/30 border-2 border-yellow-500";
-      // MINIMIZED: Icon is smaller
-      content = `<i data-lucide="check-circle" class="w-6 h-6 text-yellow-400 mx-auto"></i>`;
-      
-      // BLUR SHADOW EFFECT: We wrap the claimed box in a relative container
-      // with an absolute, blurred element behind it.
-      finalHtml = `
+          // BLUR SHADOW EFFECT: We wrap the claimed box in a relative container
+          // with an absolute, blurred element behind it.
+          finalHtml = `
         <div class="relative">
           <div class="absolute -inset-1 bg-yellow-500 rounded-xl blur-lg opacity-60"></div>
           <div class="relative rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}">
@@ -355,78 +392,75 @@ this.renderDashboardDailyRewards = () => {
           </div>
         </div>
       `;
-    } else {
-      if (isClaimable) {
-        boxClass = "bg-green-500/30 border-2 border-green-500 cursor-pointer animate-pulse";
-        // MINIMIZED: Text is smaller
-        content = `<div class="font-bold text-white text-sm">Claim</div><div class="text-xs text-green-300">${points} pts</div>`;
-        onClick = `onclick="app.claimDailyReward()"`;
-      }
-      // The non-claimed boxes don't get the glow wrapper
-      finalHtml = `<div class="rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}" ${onClick}>${content}</div>`;
-    }
+        } else {
+          if (isClaimable) {
+            boxClass =
+              "bg-green-500/30 border-2 border-green-500 cursor-pointer animate-pulse";
+            // MINIMIZED: Text is smaller
+            content = `<div class="font-bold text-white text-sm">Claim</div><div class="text-xs text-green-300">${points} pts</div>`;
+            onClick = `onclick="app.claimDailyReward()"`;
+          }
+          // The non-claimed boxes don't get the glow wrapper
+          finalHtml = `<div class="rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}" ${onClick}>${content}</div>`;
+        }
 
-    return finalHtml;
-  }).join("");
+        return finalHtml;
+      })
+      .join("");
 
-  return `
+    return `
     <div class="mb-4">
         <h3 class="text-s font-bold text-white mb-2">Daily Rewards</h3>
         <div class="grid grid-cols-5 gap-3 text-center">
             ${rewardBoxes}
         </div>
     </div>`;
-};
+  };
 
-//DASHBOARD BUTTONS
+  //DASHBOARD BUTTONS
+  // Find and replace your ENTIRE renderDashboardActions function with this:
 this.renderDashboardActions = () => {
-    return `
-    <div class="grid grid-cols-3 gap-3"> 
-          <button onclick="app.navigateTo('scanner')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="scan-line" class="text-pink-400"></i>
-              <span class="font-semibold text-xs">Scan QR Code</span>
-          </button>
-          <button onclick="app.navigateTo('profile')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="user-circle" class="text-purple-400"></i>
-              <span class="font-semibold text-xs">My Profile</span>
-          </button>
-          <button onclick="app.navigateTo('facebookFeed')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="facebook" class="text-blue-400"></i>
-              <span class="font-semibold text-xs">BBGS Updates</span>
-          </button>
-          <button onclick="app.navigateTo('qrSpots')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="map-pin" class="text-green-400"></i>
-              <span class="font-semibold text-xs">QR Spots</span>
-          </button>
-          <button onclick="app.navigateTo('directory')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="users" class="text-orange-400"></i>
-              <span class="font-semibold text-xs">Members Directory</span>
-          </button>
-          <button onclick="app.navigateTo('leaderboard')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="bar-chart-3" class="text-pink-400"></i>
-              <span class="font-semibold text-xs">Ranks</span>
-          </button>
-          <button onclick="app.navigateTo('announcements')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-              <i data-lucide="megaphone" class="text-red-400"></i>
-              <span class="font-semibold text-xs">Announcement</span>
-          </button>
-           <button onclick="app.navigateTo('userguide')" class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-            <i data-lucide="book-open" class="text-yellow-400"></i>
-            <span class="font-semibold text-xs">User Guide</span>
-        </button>
+    // This function now RETURNS the complete HTML for the circular menu.
+  return `
+    <p><p><p>
+        <div class="action-menu-container">
+            <div class="action-menu">
+                <button onclick="app.navigateTo('scanner')" class="action-menu-item" title="Scan QR Code">
+                    <i data-lucide="scan-line" class="text-pink-400"></i>
+                </button>
+                <button onclick="app.navigateTo('profile')" class="action-menu-item" title="My Profile">
+                    <i data-lucide="user-circle" class="text-purple-400"></i>
+                </button>
 
-         <button onclick="app.navigateTo('badges')"class="bg-gray-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-gray-600 transition-colors">
-           <i data-lucide="circle-star" class="text-green-400"></i>
-            <span class="text-xs mt-1">Badges</span>
-          </button>
-      </div>
+                <button onclick="app.navigateTo('qrSpots')" class="action-menu-item" title="QR Spots">
+                    <i data-lucide="map-pin" class="text-green-400"></i>
+                </button>
+                <button onclick="app.navigateTo('directory')" class="action-menu-item" title="Members Directory">
+                    <i data-lucide="users" class="text-orange-400"></i>
+                </button>
+                <button onclick="app.navigateTo('leaderboard')" class="action-menu-item" title="Ranks">
+                    <i data-lucide="bar-chart-3" class="text-pink-400"></i>
+                </button>
+                <button onclick="app.navigateTo('announcements')" class="action-menu-item" title="Announcement">
+                    <i data-lucide="megaphone" class="text-red-400"></i>
+                </button>
+               
+                <button onclick="app.navigateTo('badges')" class="action-menu-item" title="Badges">
+                    <i data-lucide="circle-star" class="text-green-400"></i>
+                </button>
+                
+                <button onclick="app.toggleActionMenu(event)" class="action-menu-toggle">
+                    <i data-lucide="plus" class="w-8 h-8"></i>
+                </button>
+            </div>
+        </div>
     `;
 };
 
-/**
- * Renders the latest announcement for the dashboard.
- */
-this.renderDashboardAnnouncement = () => {
+  /**
+   * Renders the latest announcement for the dashboard.
+   */
+  this.renderDashboardAnnouncement = () => {
     const latestAnnouncement = this.state.announcements[0];
     if (!latestAnnouncement) return "";
 
@@ -439,7 +473,7 @@ this.renderDashboardAnnouncement = () => {
           <p class="text-gray-300">${latestAnnouncement.message}</p>
       </div>
     `;
-};
+  };
 
   // Add these new functions inside your App function in script.js
 
@@ -478,79 +512,82 @@ this.renderDashboardAnnouncement = () => {
 
   // Replace your existing claimDailyReward function with this one
 
- this.claimDailyReward = async () => {
-  if (!this.state.loginReward.canClaim) {
-    this.showModal(
-      "error",
-      "Already Claimed",
-      "You have already claimed your reward for today."
-    );
-    return;
-  }
+  this.claimDailyReward = async () => {
+    if (!this.state.loginReward.canClaim) {
+      this.showModal(
+        "error",
+        "Already Claimed",
+        "You have already claimed your reward for today."
+      );
+      return;
+    }
 
-  this.showLoading("Claiming Reward...");
-  const uid = this.fb.auth.currentUser.uid;
-  const userRef = doc(this.fb.db, this.paths.users, uid);
+    this.showLoading("Claiming Reward...");
+    const uid = this.fb.auth.currentUser.uid;
+    const userRef = doc(this.fb.db, this.paths.users, uid);
 
-  try {
-    const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
-    const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
+    try {
+      const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
+      const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
 
-    // 1. Update the document in Firestore.
-    await updateDoc(userRef, {
-      points: increment(pointsToAdd),
-      consecutiveLogins: newStreak,
-      lastLoginDate: Timestamp.now(),
-    });
+      // 1. Update the document in Firestore.
+      await updateDoc(userRef, {
+        points: increment(pointsToAdd),
+        consecutiveLogins: newStreak,
+        lastLoginDate: Timestamp.now(),
+      });
 
-    // 2. Fetch the updated user data directly from Firestore.
-    const updatedUserDoc = await getDoc(userRef);
-    this.state.loggedInUser = {
-      id: updatedUserDoc.id,
-      ...updatedUserDoc.data(),
-    };
+      // 2. Fetch the updated user data directly from Firestore.
+      const updatedUserDoc = await getDoc(userRef);
+      this.state.loggedInUser = {
+        id: updatedUserDoc.id,
+        ...updatedUserDoc.data(),
+      };
 
-    // --- START: THIS IS THE NEW LINE YOU REQUESTED ---
-    // 3. Log this action to the admin system log.
-    const user = this.state.loggedInUser;
-    await this.logAction("DAILY_REWARD_CLAIM", `${user.firstName} ${user.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`);
-    // --- END: NEW LINE ---
+      // --- START: THIS IS THE NEW LINE YOU REQUESTED ---
+      // 3. Log this action to the admin system log.
+      const user = this.state.loggedInUser;
+      await this.logAction(
+        "DAILY_REWARD_CLAIM",
+        `${user.firstName} ${user.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`
+      );
+      // --- END: NEW LINE ---
 
-    // 4. Hide the loading spinner and show the success message.
-    this.hideLoading();
-    this.showModal(
-      "success",
-      "Reward Claimed!",
-      `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
-    );
+      // 4. Hide the loading spinner and show the success message.
+      this.hideLoading();
+      this.showModal(
+        "success",
+        "Reward Claimed!",
+        `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
+      );
 
-    // 5. Re-render the dashboard with the fresh, correct data.
-    this.render("dashboard");
-    lucide.createIcons();
-  } catch (error) {
-    console.error("Error claiming reward: ", error);
-    this.hideLoading();
-    this.showModal(
-      "error",
-      "Error",
-      "Could not claim your reward. Please try again."
-    );
-  }
-};
+      // 5. Re-render the dashboard with the fresh, correct data.
+      this.render("dashboard");
+      lucide.createIcons();
+    } catch (error) {
+      console.error("Error claiming reward: ", error);
+      this.hideLoading();
+      this.showModal(
+        "error",
+        "Error",
+        "Could not claim your reward. Please try again."
+      );
+    }
+  };
 
   // Add this new function to handle the timer logic
-this.startDailyRewardTimer = () => {
-  // Stop any existing timer to prevent multiple timers running at once
-  if (this.state.dailyRewardTimerId) {
+  this.startDailyRewardTimer = () => {
+    // Stop any existing timer to prevent multiple timers running at once
+    if (this.state.dailyRewardTimerId) {
       clearInterval(this.state.dailyRewardTimerId);
-  }
+    }
 
-  const timerElement = document.getElementById("daily-reward-timer");
-  if (!timerElement) {
+    const timerElement = document.getElementById("daily-reward-timer");
+    if (!timerElement) {
       return; // Exit if the timer element isn't on the page
-  }
+    }
 
-  const updateTimer = () => {
+    const updateTimer = () => {
       const now = new Date();
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -559,34 +596,35 @@ this.startDailyRewardTimer = () => {
       const timeRemaining = tomorrow - now;
 
       if (timeRemaining <= 0) {
-          clearInterval(this.state.dailyRewardTimerId);
-          this.state.dailyRewardTimerId = null;
-          this.render("dashboard"); // Re-render the dashboard to show the "Claim" button
-          return;
+        clearInterval(this.state.dailyRewardTimerId);
+        this.state.dailyRewardTimerId = null;
+        this.render("dashboard"); // Re-render the dashboard to show the "Claim" button
+        return;
       }
 
       const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
       const seconds = Math.floor((timeRemaining / 1000) % 60);
 
-      const formattedTime =
-          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      
+      const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+        minutes
+      ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
       timerElement.textContent = `Next reward in: ${formattedTime}`;
+    };
+
+    // Run immediately and then every second
+    updateTimer();
+    this.state.dailyRewardTimerId = setInterval(updateTimer, 1000);
   };
 
-  // Run immediately and then every second
-  updateTimer();
-  this.state.dailyRewardTimerId = setInterval(updateTimer, 1000);
-};
-
-// Add this function to stop the timer
-this.stopDailyRewardTimer = () => {
-  if (this.state.dailyRewardTimerId) {
+  // Add this function to stop the timer
+  this.stopDailyRewardTimer = () => {
+    if (this.state.dailyRewardTimerId) {
       clearInterval(this.state.dailyRewardTimerId);
       this.state.dailyRewardTimerId = null;
-  }
-};
+    }
+  };
 
   // Replace your old downloadAttendees function with this one
   this.downloadAttendees = async (eventId, eventName) => {
@@ -667,7 +705,6 @@ this.stopDailyRewardTimer = () => {
     </svg>`;
     this.elements.modalButtons.innerHTML = ""; // No buttons for loading
     this.elements.modal.classList.remove("hidden");
-    
   };
 
   this.hideLoading = () => {
@@ -691,12 +728,12 @@ this.stopDailyRewardTimer = () => {
       );
     }
     // --- END: ADDED SECTION ---
-  
+
     this.state.currentChatId = chatId;
     this.detachChatListeners(); // Remove old message listeners
     this.listenToChatMessages(chatId);
     this.navigateTo("messages");
-  
+
     setTimeout(() => {
       const messagesContainer = document.getElementById("messages-container");
       if (messagesContainer) {
@@ -967,7 +1004,6 @@ this.stopDailyRewardTimer = () => {
       this.openChat(newChatRef.id);
     }
   };
-  
 
   // Closes the active chat and returns to the chat list
   this.closeChat = () => {
@@ -980,7 +1016,9 @@ this.stopDailyRewardTimer = () => {
       // Reset unread count for the current user when they close the chat
       updateDoc(chatRef, {
         [`unreadCount.${currentUser.id}`]: 0,
-      }).catch((error) => console.error("Error resetting unread count:", error));
+      }).catch((error) =>
+        console.error("Error resetting unread count:", error)
+      );
     }
 
     this.state.currentChatId = null;
@@ -1158,7 +1196,7 @@ this.stopDailyRewardTimer = () => {
 
   // --- Firestore collection paths ---
   const appId = typeof __app_id !== "undefined" ? __app_id : "bbgs-pride-pass"; // Fallback for local dev
- this.deferredInstallPrompt = null;
+  this.deferredInstallPrompt = null;
 
   this.paths = {
     users: `artifacts/${appId}/users`,
@@ -1672,38 +1710,35 @@ this.stopDailyRewardTimer = () => {
             </div>`,
 
     //MAIN DASHBOARD OF ALL
+    // In your routes or wherever the dashboard function is defined
     dashboard: () => {
       const user = this.state.loggedInUser;
 
+      // This part for unvalidated users remains the same
       if (!user.isValidated) {
         return `
-        <div class="text-center p-6 bg-gray-900/50 rounded-xl">
-            <i data-lucide="shield-alert" class="w-16 h-16 mx-auto text-amber-400 mb-4"></i>
-            <h2 class="text-2xl font-bold mb-2">Account Pending Approval</h2>
-            <p class="text-gray-400">Your account is registered. An administrator will review it shortly, granting full access upon approval.</p>
-           <div style="position: relative; width: 100%; height: 0; padding-top: 177.7778%;
- padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https://www.canva.com/design/DAGzVdGAtOo/XKZk6a7b42uHmO_zDGrzfQ/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>
-
+      <div class="text-center p-6 bg-gray-900/50 rounded-xl">
+        <i data-lucide="shield-alert" class="w-16 h-16 mx-auto text-amber-400 mb-4"></i>
+        <h2 class="text-2xl font-bold mb-2">Account Pending Approval</h2>
+        <p class="text-gray-400">Your account is registered. An administrator will review it shortly, granting full access upon approval.</p>
+        <div style="position: relative; width: 100%; height: 0; padding-top: 177.7778%; padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden; border-radius: 8px; will-change: transform;">
+          <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+            src="https://www.canva.com/design/DAGzVdGAtOo/XKZk6a7b42uHmO_zDGrzfQ/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
+          </iframe>
         </div>
-      `;
+      </div>
+    `;
       }
 
-      // This part remains the same and now works perfectly with your coding style
+      // UPDATED PART FOR VALIDATED USERS
       return `
     <div class="space-y-4">
-    <!--
-      ${this.renderDashboardCarousel()}
-     -->
       ${this.renderDashboardDailyRewards()}
       ${this.renderDashboardProfile(user)}
-      ${this.renderDashboardActions()}
-      ${this.renderDashboardAnnouncement()}
       
+      ${this.renderDashboardActions()} 
+      
+      ${this.renderDashboardAnnouncement()}
     </div>
   `;
     },
@@ -2938,37 +2973,36 @@ this.stopDailyRewardTimer = () => {
     },
   };
 
+  //FETCH ANNOUNCEMENT
+  this.fetchAnnouncements = async () => {
+    try {
+      const { getFirestore, collection, query, getDocs, orderBy } = this.fb;
+      const db = getFirestore();
+      const announcementsRef = collection(db, "announcements");
+      // Order by timestamp to show the newest announcements first
+      const q = query(announcementsRef, orderBy("timestamp", "desc"));
 
-//FETCH ANNOUNCEMENT
-this.fetchAnnouncements = async () => {
-  try {
-    const { getFirestore, collection, query, getDocs, orderBy } = this.fb;
-    const db = getFirestore();
-    const announcementsRef = collection(db, "announcements");
-    // Order by timestamp to show the newest announcements first
-    const q = query(announcementsRef, orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      const announcementsData = [];
+      querySnapshot.forEach((doc) => {
+        announcementsData.push({ id: doc.id, ...doc.data() });
+      });
 
-    const querySnapshot = await getDocs(q);
-    const announcementsData = [];
-    querySnapshot.forEach((doc) => {
-      announcementsData.push({ id: doc.id, ...doc.data() });
-    });
+      this.state.announcements = announcementsData;
+      console.log("Announcements loaded successfully.");
+    } catch (error) {
+      console.error("Error fetching announcements:", error);
+    }
+  };
 
-    this.state.announcements = announcementsData;
-    console.log("Announcements loaded successfully.");
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
-  }
-};
+  /**
+   * Toggles the expanded state of an announcement item.
+   */
+  this.toggleAnnouncement = (element) => {
+    element.classList.toggle("expanded");
+  };
 
-/**
- * Toggles the expanded state of an announcement item.
- */
-this.toggleAnnouncement = (element) => {
-    element.classList.toggle('expanded');
-};
-
-this.showTermsModal = () => {
+  this.showTermsModal = () => {
     const content = `
       <div class="text-left text-gray-300 space-y-4 text-sm max-h-[70vh] overflow-y-auto pr-2">
           <p class="font-bold">Last Updated: September 17, 2025</p>
@@ -3044,60 +3078,58 @@ this.showTermsModal = () => {
           </div>
       </div>
     `;
-    this.openFullscreenModal('Terms and Conditions', content);
-};
-
-
+    this.openFullscreenModal("Terms and Conditions", content);
+  };
 
   // --- FIREBASE INITIALIZATION ---
   this.init = async () => {
     // Your web app's Firebase configuration
-  
 
     const firebaseConfig = {
-  apiKey: "AIzaSyBqEzwtvtr-5XEdMqDZV16Sk99YTV44Xbk",
-  authDomain: "costing-a3c19.firebaseapp.com",
-  projectId: "costing-a3c19",
-  storageBucket: "costing-a3c19.firebasestorage.app",
-  messagingSenderId: "552775279399",
-  appId: "1:552775279399:web:49324bdb32dfab87233f02",
+      apiKey: "AIzaSyBqEzwtvtr-5XEdMqDZV16Sk99YTV44Xbk",
+      authDomain: "costing-a3c19.firebaseapp.com",
+      projectId: "costing-a3c19",
+      storageBucket: "costing-a3c19.firebasestorage.app",
+      messagingSenderId: "552775279399",
+      appId: "1:552775279399:web:49324bdb32dfab87233f02",
       measurementId: "G-P5RG5129KZ",
-  databaseURL: "https://qrcode-7f9c0-default-rtdb.firebaseio.com",
-};
+      databaseURL: "https://qrcode-7f9c0-default-rtdb.firebaseio.com",
+    };
 
     try {
       this.fb.app = initializeApp(firebaseConfig);
       // ... your other Firebase service initializations (auth, db, etc.) ...
       this.manageWakeLock();
-      
-       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js");
 
         // Check for iOS/Safari and show the manual instructions button
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isIOS =
+          /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         // Also check if the app is NOT already running in standalone (installed) mode
-        const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
-        
+        const isInStandaloneMode =
+          "standalone" in window.navigator && window.navigator.standalone;
+
         if (isIOS && !isInStandaloneMode) {
-            // Use a timeout to ensure the DOM has rendered the button
-            setTimeout(() => {
-                const iosInstallButton = document.getElementById('ios-install-button');
-                if(iosInstallButton) iosInstallButton.style.display = 'flex';
-            }, 500);
+          // Use a timeout to ensure the DOM has rendered the button
+          setTimeout(() => {
+            const iosInstallButton =
+              document.getElementById("ios-install-button");
+            if (iosInstallButton) iosInstallButton.style.display = "flex";
+          }, 500);
         }
       }
 
       // Listen for the standard PWA install prompt (for Chrome/Android)
-      window.addEventListener('beforeinstallprompt', (e) => {
+      window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
-        const installButton = document.getElementById('install-app-button');
+        const installButton = document.getElementById("install-app-button");
         if (installButton) {
-          installButton.style.display = 'flex'; // Make the button visible
+          installButton.style.display = "flex"; // Make the button visible
         }
       });
-
-
     } catch (error) {}
 
     try {
@@ -3107,7 +3139,6 @@ this.showTermsModal = () => {
       this.fb.rtdb = getDatabase(this.fb.app);
       this.fb.storage = getStorage(this.fb.app);
       this.manageWakeLock();
-       
     } catch (error) {
       console.error("Firebase initialization failed:", error);
       this.elements.loadingText.textContent =
@@ -3115,8 +3146,6 @@ this.showTermsModal = () => {
       this.elements.loadingText.classList.add("text-red-400");
       return;
     }
-
-
 
     await this.handleRedirectResult();
 
@@ -3128,9 +3157,8 @@ this.showTermsModal = () => {
           doc(this.fb.db, this.paths.userDoc(user.uid))
         );
         if (userDoc.exists()) {
-          
           this.state.loggedInUser = { id: user.uid, ...userDoc.data() };
-          await this.fetchAnnouncements(); 
+          await this.fetchAnnouncements();
           this.elements.appHeader.classList.remove("hidden");
           this.elements.appNav.classList.remove("hidden");
           this.applyTheme(this.state.loggedInUser.theme);
@@ -3138,17 +3166,14 @@ this.showTermsModal = () => {
           this.attachListeners(); // Attach all necessary listeners for the logged-in user
           this.updateUserInfo();
           this.navigateTo("dashboard");
-        } 
-        
-        
-        else {
+        } else {
           // User exists in Auth, but not in Firestore database. Log them out.
           this.handleLogout();
         }
       } else {
         this.state.firebaseUser = null;
         this.state.loggedInUser = null;
-        this.state.announcements = []; 
+        this.state.announcements = [];
         this.elements.appHeader.classList.add("hidden");
         this.elements.appNav.classList.add("hidden");
         this.applyTheme("default");
@@ -3156,24 +3181,21 @@ this.showTermsModal = () => {
       }
       this.elements.loadingOverlay.classList.add("hidden");
     });
-
-    
-  
   };
 
- this.handleInstallClick = async () => {
+  this.handleInstallClick = async () => {
     if (this.deferredInstallPrompt) {
       this.deferredInstallPrompt.prompt();
       const { outcome } = await this.deferredInstallPrompt.userChoice;
       console.log(`User response to the install prompt: ${outcome}`);
       this.deferredInstallPrompt = null;
-      const installButton = document.getElementById('install-app-button');
-      if (installButton) installButton.style.display = 'none';
+      const installButton = document.getElementById("install-app-button");
+      if (installButton) installButton.style.display = "none";
     }
   };
 
   this.showIosInstallInstructions = () => {
-      const content = `
+    const content = `
         <div class="text-left space-y-4">
             <p class="font-semibold text-lg">To Add to Home Screen:</p>
             <ol class="list-decimal list-inside space-y-4 text-gray-300">
@@ -3183,10 +3205,9 @@ this.showTermsModal = () => {
             <img src="IOSguide.png" alt="Visual instructions for adding an app to the home screen on iOS" class="rounded-lg mt-4 border border-gray-600">
         </div>
       `;
-      this.openFullscreenModal('Install App on iOS', content);
+    this.openFullscreenModal("Install App on iOS", content);
   };
 
-   
   // --- NEW FUNCTION: MANAGE PRESENCE ---
   this.managePresence = () => {
     if (!this.state.firebaseUser) return;
@@ -3394,8 +3415,7 @@ this.showTermsModal = () => {
     this.detachChatListeners();
   };
 
-
-//THIS RENDER MAIN
+  //THIS RENDER MAIN
   this.render = () => {
     const template = this.templates[this.state.currentPage];
     if (template) {
@@ -3407,7 +3427,7 @@ this.showTermsModal = () => {
   this.navigateTo = (page) => {
     // Remove any existing scroll listener from the previous page
     this.elements.mainContent.onscroll = null;
-       if (this.state.currentPage === "scanner" && this.qrScanner)
+    if (this.state.currentPage === "scanner" && this.qrScanner)
       this.stopScanner();
     if (
       this.state.loggedInUser &&
@@ -3427,7 +3447,7 @@ this.showTermsModal = () => {
       this.fetchAllRewardsForAdmin();
     }
 
-  this.state.currentPage = page;
+    this.state.currentPage = page;
     if (page === "rewards") {
       this.state.rewards = [];
       this.state.rewardsLastDoc = null;
@@ -3441,23 +3461,19 @@ this.showTermsModal = () => {
       this.state.leaderboardLoading = false; // Reset the loading flag
     }
     if (this.aboutAudio) {
-        this.aboutAudio.pause();
-        this.aboutAudio.currentTime = 0;
-        this.aboutAudio = null;
-      }
-    if (page === 'about') {  
+      this.aboutAudio.pause();
+      this.aboutAudio.currentTime = 0;
+      this.aboutAudio = null;
+    }
+    if (page === "about") {
       this.aboutAudio = new Audio("NoteGPT_Speech_1757811715642.mp3");
       this.aboutAudio.play();
     }
-
-      
 
     this.updateNav();
     this.state.currentPage = page;
     this.render();
   };
-
-  
 
   // 5minutes Online
   this.isUserOnline = (timestamp) => {
@@ -3515,7 +3531,6 @@ this.showTermsModal = () => {
         }
         break;
       case "dashboard":
-        
         if (this.state.loggedInUser.isValidated)
           this.generateQRCode(
             "member-qr-code",
@@ -3561,21 +3576,20 @@ this.showTermsModal = () => {
         };
         break;
       case "profile":
-
-      const user = this.state.loggedInUser;
+        const user = this.state.loggedInUser;
         const form = document.getElementById("profile-form");
 
         if (user && form) {
-            // An array of the dropdown names we need to set
-            const fieldsToSet = ['pronouns', 'gender', 'orientation'];
+          // An array of the dropdown names we need to set
+          const fieldsToSet = ["pronouns", "gender", "orientation"];
 
-            fieldsToSet.forEach(field => {
-                const selectElement = form.elements[field];
-                if (selectElement) {
-                    // This correctly sets the dropdown to the user's saved value
-                    selectElement.value = user[field] || '';
-                }
-            });
+          fieldsToSet.forEach((field) => {
+            const selectElement = form.elements[field];
+            if (selectElement) {
+              // This correctly sets the dropdown to the user's saved value
+              selectElement.value = user[field] || "";
+            }
+          });
         }
 
         document
@@ -3589,7 +3603,7 @@ this.showTermsModal = () => {
         this.startScanner();
         break;
       case "admin":
-               if (document.getElementById("reward-form")) {
+        if (document.getElementById("reward-form")) {
           document
             .getElementById("reward-form")
             .addEventListener("submit", (e) => {
@@ -3645,12 +3659,10 @@ this.showTermsModal = () => {
         });
         break;
       case "userguide":
-          html = this.views.userguide();
-          break;
+        html = this.views.userguide();
+        break;
     }
   };
-
- 
 
   this.eventIcon = L.icon({
     iconUrl:
@@ -3978,6 +3990,14 @@ this.showTermsModal = () => {
     itemSelect.innerHTML = options;
   };
 
+  // Add this function inside the App class in script.js
+  this.toggleActionMenu = (event) => {
+    const menu = event.currentTarget.closest(".action-menu");
+    if (menu) {
+      menu.classList.toggle("open");
+    }
+  };
+
   this.populateSpotsList = () => {
     const listElement = document.getElementById("spots-list");
     if (!listElement) return;
@@ -4013,7 +4033,6 @@ this.showTermsModal = () => {
       .join("");
     lucide.createIcons();
   };
-
 
   this.handleSaveSpot = async (e) => {
     e.preventDefault();
@@ -4886,7 +4905,6 @@ this.showTermsModal = () => {
     });
   };
 
-
   this.aboutSound = new Audio("NoteGPT_Speech_1757811715642.mp3");
 
   this.fetchRewards = async () => {
@@ -5011,7 +5029,9 @@ this.showTermsModal = () => {
         gender: newUser.gender || "",
         orientation: newUser.orientation || "",
         points: 50,
-        profilePic: `https://placehold.co/400x400/F59E0B/FFFFFF?text=${newUser.firstName.charAt(0)}`,
+        profilePic: `https://placehold.co/400x400/F59E0B/FFFFFF?text=${newUser.firstName.charAt(
+          0
+        )}`,
         memberSince: new Date().toLocaleDateString(),
         isPublic: false,
         isValidated: false,
@@ -5114,90 +5134,96 @@ this.showTermsModal = () => {
     }
   };
 
+  this.resizeAndCompressImage = (file, maxWidth, maxHeight, quality) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
 
-this.resizeAndCompressImage = (file, maxWidth, maxHeight, quality) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        // Calculate the new dimensions to maintain aspect ratio
-        if (width > height) {
-          if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
+          // Calculate the new dimensions to maintain aspect ratio
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
           }
-        } else {
-          if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-          }
-        }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
 
-        // Get the compressed image Data URL
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl);
+          // Get the compressed image Data URL
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          resolve(dataUrl);
+        };
+        img.onerror = reject;
       };
-      img.onerror = reject;
-    };
-    reader.onerror = reject;
-  });
-};
+      reader.onerror = reject;
+    });
+  };
 
+  this.handleProfilePicChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-
-this.handleProfilePicChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  // Show a loading/processing modal to the user
-  this.showModal("info", "Processing...", "Your photo is being prepared. Please wait.");
-
-  try {
-    // --- THIS IS THE NEW PART ---
-    // Resize the image to a max of 1024x1024 with 70% quality
-    const compressedPicDataUrl = await this.resizeAndCompressImage(file, 1024, 1024, 0.7);
-    // --- END OF NEW PART ---
-
-    // Update the UI previews
-    const previewPic = document.getElementById("profile-pic-preview");
-    if (previewPic) previewPic.src = compressedPicDataUrl;
-    const headerPic = document.getElementById("header-profile-pic");
-    if (headerPic) headerPic.src = compressedPicDataUrl;
-
-    // Save the compressed image data to Firestore
-    await updateDoc(
-      doc(this.fb.db, this.paths.userDoc(this.state.firebaseUser.uid)), {
-        profilePic: compressedPicDataUrl, // Save the compressed version
-      }
-    );
-
+    // Show a loading/processing modal to the user
     this.showModal(
-      "success",
-      "Photo Updated",
-      "Your new profile picture has been saved."
+      "info",
+      "Processing...",
+      "Your photo is being prepared. Please wait."
     );
-  } catch (error) {
-    console.error("Photo Processing Error:", error);
-    this.showModal(
-      "error",
-      "Update Failed",
-      "Could not process or save the new photo."
-    );
-  }
-};
 
+    try {
+      // --- THIS IS THE NEW PART ---
+      // Resize the image to a max of 1024x1024 with 70% quality
+      const compressedPicDataUrl = await this.resizeAndCompressImage(
+        file,
+        1024,
+        1024,
+        0.7
+      );
+      // --- END OF NEW PART ---
+
+      // Update the UI previews
+      const previewPic = document.getElementById("profile-pic-preview");
+      if (previewPic) previewPic.src = compressedPicDataUrl;
+      const headerPic = document.getElementById("header-profile-pic");
+      if (headerPic) headerPic.src = compressedPicDataUrl;
+
+      // Save the compressed image data to Firestore
+      await updateDoc(
+        doc(this.fb.db, this.paths.userDoc(this.state.firebaseUser.uid)),
+        {
+          profilePic: compressedPicDataUrl, // Save the compressed version
+        }
+      );
+
+      this.showModal(
+        "success",
+        "Photo Updated",
+        "Your new profile picture has been saved."
+      );
+    } catch (error) {
+      console.error("Photo Processing Error:", error);
+      this.showModal(
+        "error",
+        "Update Failed",
+        "Could not process or save the new photo."
+      );
+    }
+  };
 
   this.handleProfileUpdate = async (e) => {
     e.preventDefault();
@@ -5569,35 +5595,34 @@ this.handleProfilePicChange = async (e) => {
   };
 
   // This single function now handles both creating and updating
-this.handleSubmitAnnouncement = async (e) => {
-  e.preventDefault();
-  
-  // Get all data from the form, including the hidden ID
-  const id = e.target.elements.announcementId.value;
-  const title = e.target.elements.announcementTitle.value;
-  const message = e.target.elements.announcementMessage.value;
-  
-  if (!title || !message) return; // Basic validation
+  this.handleSubmitAnnouncement = async (e) => {
+    e.preventDefault();
 
-  if (id) {
-    // If an ID exists, we are UPDATING an existing announcement
-    const docRef = doc(this.fb.db, this.paths.announcements, id);
-    await updateDoc(docRef, { title, message });
-    this.showModal("success", "Updated!", "Announcement has been updated.");
-  } else {
-    // If no ID exists, we are CREATING a new announcement
-    await addDoc(collection(this.fb.db, this.paths.announcements), {
-      title,
-      message,
-      timestamp: new Date().toLocaleString(),
-    });
-  }
-  
-  // After either creating or updating, reset the form to its original state
-  this.handleCancelEdit();
-  this.state.adminActiveTab = "announcements"; // Re-render the view
-};
-  
+    // Get all data from the form, including the hidden ID
+    const id = e.target.elements.announcementId.value;
+    const title = e.target.elements.announcementTitle.value;
+    const message = e.target.elements.announcementMessage.value;
+
+    if (!title || !message) return; // Basic validation
+
+    if (id) {
+      // If an ID exists, we are UPDATING an existing announcement
+      const docRef = doc(this.fb.db, this.paths.announcements, id);
+      await updateDoc(docRef, { title, message });
+      this.showModal("success", "Updated!", "Announcement has been updated.");
+    } else {
+      // If no ID exists, we are CREATING a new announcement
+      await addDoc(collection(this.fb.db, this.paths.announcements), {
+        title,
+        message,
+        timestamp: new Date().toLocaleString(),
+      });
+    }
+
+    // After either creating or updating, reset the form to its original state
+    this.handleCancelEdit();
+    this.state.adminActiveTab = "announcements"; // Re-render the view
+  };
 
   this.handleDeleteAnnouncement = async (id) => {
     await deleteDoc(doc(this.fb.db, this.paths.announcements, id));
@@ -6366,32 +6391,48 @@ this.handleSubmitAnnouncement = async (e) => {
     );
   };
 
-
   this.openMemberDetailsModal = (userId) => {
     const user = this.state.users.find((u) => u.id === userId);
     if (!user) return;
-    const earnedBadges = (user.earnedBadgeIds || []).map((badgeId) => this.state.badges.find((b) => b.id === badgeId)).filter(Boolean);
-    const content = `<div class="text-center space-y-4"><img src="${user.profilePic }" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-purple-500">
+    const earnedBadges = (user.earnedBadgeIds || [])
+      .map((badgeId) => this.state.badges.find((b) => b.id === badgeId))
+      .filter(Boolean);
+    const content = `<div class="text-center space-y-4"><img src="${
+      user.profilePic
+    }" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-purple-500">
     
     <h2 class="text-2xl font-bold">${user.firstName} ${user.lastName}</h2>
-    <h4 class="text-l font-bold">Student ID: ${user.studentid || user.firstName} </h4>
-    <p>${user.pronouns || ""}  | ${user.gender ||""}  | ${user.orientation || ""}</p>
+    <h4 class="text-l font-bold">Student ID: ${
+      user.studentid || user.firstName
+    } </h4>
+    <p>${user.pronouns || ""}  | ${user.gender || ""}  | ${
+      user.orientation || ""
+    }</p>
     <p class="text-gray-400">${user.skills || "No skills listed"}</p>
     <div class="flex items-center justify-center space-x-2"">
       <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
-      <a href="tel:${user.contact}" class="text-sm text-pink-400 hover:text-pink-300">${user.contact}</a>
+      <a href="tel:${
+        user.contact
+      }" class="text-sm text-pink-400 hover:text-pink-300">${user.contact}</a>
     </div>
 
     <div class="mt-4 border-t border-gray-600 pt-4">
       <h4 class="font-semibold text-center mb-2">Earned Badges</h4>
-        <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">${earnedBadges.length > 0 ? earnedBadges.map((badge) => `<div class="text-center p-2 bg-gray-700 rounded-lg">${this.renderBadgeIcon(
-                  badge.icon,
-                  "w-10 h-10 mx-auto text-amber-400"
-                )}<p class="text-xs mt-2 font-semibold">${badge.name}</p></div>`
-            )
-            .join("")
-        : '<p class="text-gray-400 col-span-full">No badges earned yet.</p>'
-    }</div></div></div>`;
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-4">${
+          earnedBadges.length > 0
+            ? earnedBadges
+                .map(
+                  (badge) =>
+                    `<div class="text-center p-2 bg-gray-700 rounded-lg">${this.renderBadgeIcon(
+                      badge.icon,
+                      "w-10 h-10 mx-auto text-amber-400"
+                    )}<p class="text-xs mt-2 font-semibold">${
+                      badge.name
+                    }</p></div>`
+                )
+                .join("")
+            : '<p class="text-gray-400 col-span-full">No badges earned yet.</p>'
+        }</div></div></div>`;
     this.openFullscreenModal(`Member Details`, content);
   };
   this.openUserEditModal = (userId) => {
@@ -6657,21 +6698,21 @@ this.handleSubmitAnnouncement = async (e) => {
 
   this.handleTermsChange = (isChecked) => {
     // Find the button by its new ID
-    const registerButton = document.getElementById('register-button');
-    
+    const registerButton = document.getElementById("register-button");
+
     // Make sure the button exists before trying to change it
     if (registerButton) {
-        if (isChecked) {
-            // If the box is checked, enable the button
-            registerButton.disabled = false;
-            registerButton.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-            // If the box is unchecked, disable the button
-            registerButton.disabled = true;
-            registerButton.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+      if (isChecked) {
+        // If the box is checked, enable the button
+        registerButton.disabled = false;
+        registerButton.classList.remove("opacity-50", "cursor-not-allowed");
+      } else {
+        // If the box is unchecked, disable the button
+        registerButton.disabled = true;
+        registerButton.classList.add("opacity-50", "cursor-not-allowed");
+      }
     }
-};
+  };
 };
 
 //APP MAIN MAIN
