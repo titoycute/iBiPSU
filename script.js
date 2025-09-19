@@ -251,6 +251,7 @@ const App = function () {
       .filter(Boolean)
       .slice(0, 10);
     return `
+    <div class="text-center pb-3 border-m border-gray-700"></div>
     <div class="relative">
         
         
@@ -422,31 +423,30 @@ const App = function () {
 this.renderDashboardActions = () => {
     // This function now RETURNS the complete HTML for the circular menu.
   return `
-    <p><p><p>
         <div class="action-menu-container">
             <div class="action-menu">
                 <button onclick="app.navigateTo('scanner')" class="action-menu-item" title="Scan QR Code">
-                    <i data-lucide="scan-line" class="text-pink-400"></i>
+                    <i data-lucide="scan-line" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('profile')" class="action-menu-item" title="My Profile">
-                    <i data-lucide="user-circle" class="text-purple-400"></i>
+                    <i data-lucide="user-circle" class="text-yellow-400"></i>
                 </button>
 
                 <button onclick="app.navigateTo('qrSpots')" class="action-menu-item" title="QR Spots">
-                    <i data-lucide="map-pin" class="text-green-400"></i>
+                    <i data-lucide="map-pin" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('directory')" class="action-menu-item" title="Members Directory">
-                    <i data-lucide="users" class="text-orange-400"></i>
+                    <i data-lucide="users" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('leaderboard')" class="action-menu-item" title="Ranks">
-                    <i data-lucide="bar-chart-3" class="text-pink-400"></i>
+                    <i data-lucide="bar-chart-3" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('announcements')" class="action-menu-item" title="Announcement">
-                    <i data-lucide="megaphone" class="text-red-400"></i>
+                    <i data-lucide="megaphone" class="text-yellow-400"></i>
                 </button>
                
                 <button onclick="app.navigateTo('badges')" class="action-menu-item" title="Badges">
-                    <i data-lucide="circle-star" class="text-green-400"></i>
+                    <i data-lucide="circle-star" class="text-yellow-400"></i>
                 </button>
                 
                 <button onclick="app.toggleActionMenu(event)" class="action-menu-toggle">
