@@ -2223,7 +2223,7 @@ this.renderDashboardActions = () => {
     }"></div>
   </div>
   <div class="flex-1">
-    <p class="font-bold">${user.firstName} ${user.lastName}</p>
+    <p class="font-bold">${user.studentid}</p>
     <div class="flex space-x-1 mt-1">
       </div>
   </div>
