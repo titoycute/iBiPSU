@@ -1632,7 +1632,7 @@ this.renderDashboardActions = () => {
             <input name="lastName" type="text" placeholder="Last Name*" required class="w-full bg-gray-700 rounded-lg p-3">
             
         </div>
-<input name="studentid" type="text" placeholder="Student ID" class="w-full bg-gray-700 rounded-lg p-3">
+        <input name="studentid" type="text" placeholder="Student ID" class="w-full bg-gray-700 rounded-lg p-3">
         <!-- START: New Inclusive Fields -->
         <div>
             <label class="text-sm text-gray-400">Pronouns*</label>
@@ -2344,9 +2344,7 @@ this.renderDashboardActions = () => {
                    <!-- New Subheading -->
                     <h4 class="text-sm font-bold text-gray-400 border-b border-gray-600 pb-1">Public Information</h4>
                     
-                    <div><label class="text-sm text-gray-400">Student ID ##-##-#####</label><input name="studentid" value="${
-                      user.studentid
-                    }" class="w-full bg-gray-700 rounded-lg p-3 mt-1"></div>
+                    <div><label class="text-sm text-gray-400">Student ID: </label><label for="directory-opt-in" class="font-semibold">${user.studentid}</label></div>
                     
                     <div class="grid grid-cols-2 gap-4">
                          <div><label class="text-sm text-gray-400">First Name</label><input name="firstName" value="${
@@ -2589,7 +2587,7 @@ this.renderDashboardActions = () => {
                   <div class="flex items-center space-x-3"><img src="${user.profilePic}" class="w-10 h-10 rounded-full object-cover">
                     <div>
                       <p class="font-semibold">${user.firstName} ${user.lastName}</p>
-                      <p class="text-xs text-gray-400">${user.email}</p>
+                      <p class="text-xs text-gray-400">${user.studentid}</p>
                     </div>
                   </div>
                   <div class="flex space-x-2">
