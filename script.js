@@ -257,7 +257,7 @@ const App = function () {
         
         <div class="absolute -inset-1.5 pride-gradient-bg rounded-2xl blur-lg opacity-75"></div>
             <div class="relative pride-gradient-bg p-1 rounded-2xl shadow-lg">
-            <div class="bg-gray-800 rounded-xl p-4 space-y-4">
+            <div class="bg-[#000435]  rounded-xl p-4 space-y-4">
                 
                 <!-- START: ADD THIS NEW TITLE SECTION -->
                 <div class="text-center pb-3 border-b border-gray-700">
@@ -272,9 +272,8 @@ const App = function () {
                       user.profilePic
                     }" class="w-20 h-20 rounded-full object-cover border-4 border-gray-700">
                     <div class="flex-1">
-                        <h2 class="text-l font-bold">${user.firstName} ${
-      user.lastName
-    }</h2>
+                        <h3 class="text-l font-bold">${user.firstName} ${user.lastName }</h3>
+                         <h4 class="text-l font-bold">${user.studentid}</h4>
                         <div class="flex items-center text-2xl font-bold pride-gradient-text mb-1">
                             <i data-lucide="circle-star" class="w-7 h-7 mr-2 pride-gradient-text"></i>
                             <span>${
@@ -426,31 +425,31 @@ this.renderDashboardActions = () => {
         <div class="action-menu-container">
             <div class="action-menu">
                 <button onclick="app.navigateTo('scanner')" class="action-menu-item" title="Scan QR Code">
-                    <i data-lucide="scan-line" class="text-yellow-400"></i>
+                    <i data-lucide="scan-qr-code" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('profile')" class="action-menu-item" title="My Profile">
-                    <i data-lucide="user-circle" class="text-yellow-400"></i>
+                    <i data-lucide="user-round-pen" class="text-yellow-400"></i>
                 </button>
 
                 <button onclick="app.navigateTo('qrSpots')" class="action-menu-item" title="QR Spots">
-                    <i data-lucide="map-pin" class="text-yellow-400"></i>
+                    <i data-lucide="map-pinned" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('directory')" class="action-menu-item" title="Members Directory">
-                    <i data-lucide="users" class="text-yellow-400"></i>
+                    <i data-lucide="user-search" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('leaderboard')" class="action-menu-item" title="Ranks">
-                    <i data-lucide="bar-chart-3" class="text-yellow-400"></i>
+                    <i data-lucide="trophy" class="text-yellow-400"></i>
                 </button>
                 <button onclick="app.navigateTo('announcements')" class="action-menu-item" title="Announcement">
                     <i data-lucide="megaphone" class="text-yellow-400"></i>
                 </button>
                
                 <button onclick="app.navigateTo('badges')" class="action-menu-item" title="Badges">
-                    <i data-lucide="circle-star" class="text-yellow-400"></i>
+                    <i data-lucide="award" class="text-yellow-400"></i>
                 </button>
                 
                 <button onclick="app.toggleActionMenu(event)" class="action-menu-toggle">
-                    <i data-lucide="plus" class="w-8 h-8"></i>
+                    <i data-lucide="menu" class="w-8 h-8 text-[#000435]"></i>
                 </button>
             </div>
         </div>
@@ -512,69 +511,91 @@ this.renderDashboardActions = () => {
 
   // Replace your existing claimDailyReward function with this one
 
-  this.claimDailyReward = async () => {
-    if (!this.state.loginReward.canClaim) {
-      this.showModal(
-        "error",
-        "Already Claimed",
-        "You have already claimed your reward for today."
-      );
-      return;
-    }
+ this.claimDailyReward = async () => {
+   // 1. Check if the user can claim the reward
+   if (!this.state.loginReward.canClaim) {
+     this.showModal(
+       "error",
+       "Already Claimed",
+       "You have already claimed your reward for today."
+     );
+     return;
+   }
 
-    this.showLoading("Claiming Reward...");
-    const uid = this.fb.auth.currentUser.uid;
-    const userRef = doc(this.fb.db, this.paths.users, uid);
+   this.showLoading("Claiming Reward...");
+   const uid = this.fb.auth.currentUser.uid;
+   const userRef = doc(this.fb.db, this.paths.users, uid);
 
-    try {
-      const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
-      const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
+   try {
+     // 2. Get the user's current points *before* making any changes
+     const userDoc = await getDoc(userRef);
+     if (!userDoc.exists()) {
+       throw new Error("User document does not exist.");
+     }
+     const userData = userDoc.data();
+     const beforePoints = userData.points || 0;
 
-      // 1. Update the document in Firestore.
-      await updateDoc(userRef, {
-        points: increment(pointsToAdd),
-        consecutiveLogins: newStreak,
-        lastLoginDate: Timestamp.now(),
-      });
+     // 3. Determine the reward and calculate points after
+     const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
+     const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
+     const afterPoints = beforePoints + pointsToAdd;
 
-      // 2. Fetch the updated user data directly from Firestore.
-      const updatedUserDoc = await getDoc(userRef);
-      this.state.loggedInUser = {
-        id: updatedUserDoc.id,
-        ...updatedUserDoc.data(),
-      };
+     // 4. Create a batch to perform multiple writes at once
+     const batch = writeBatch(this.fb.db);
 
-      // --- START: THIS IS THE NEW LINE YOU REQUESTED ---
-      // 3. Log this action to the admin system log.
-      const user = this.state.loggedInUser;
-      await this.logAction(
-        "DAILY_REWARD_CLAIM",
-        `${user.firstName} ${user.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`
-      );
-      // --- END: NEW LINE ---
+     // 5. Update the user's points and login streak in the batch
+     batch.update(userRef, {
+       points: increment(pointsToAdd),
+       consecutiveLogins: newStreak,
+       lastLoginDate: Timestamp.now(), // Use server timestamp for accuracy
+     });
 
-      // 4. Hide the loading spinner and show the success message.
-      this.hideLoading();
-      this.showModal(
-        "success",
-        "Reward Claimed!",
-        `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
-      );
+     // 6. Add to Points History Log (using your function)
+     const logDescription = `Claimed daily reward: Day ${newStreak} streak`;
+     this.addPointLog(
+       uid,
+       logDescription,
+       pointsToAdd,
+       batch,
+       beforePoints,
+       afterPoints
+     );
 
-      // 5. Re-render the dashboard with the fresh, correct data.
-      this.render("dashboard");
-      lucide.createIcons();
-    } catch (error) {
-      console.error("Error claiming reward: ", error);
-      this.hideLoading();
-      this.showModal(
-        "error",
-        "Error",
-        "Could not claim your reward. Please try again."
-      );
-    }
-  };
+     // 7. Add to Admin Log
+     this.logAction(
+       "DAILY_REWARD_CLAIM",
+       `${userData.firstName} ${userData.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`
+     );
 
+     // 8. Commit all the changes at once
+     await batch.commit();
+
+     // --- Update UI after successful claim ---
+     this.hideLoading();
+     this.showModal(
+       "success",
+       "Reward Claimed!",
+       `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
+     );
+
+     // Re-fetch user data to update the UI and state
+     const updatedUserDoc = await getDoc(userRef);
+     this.state.loggedInUser = {
+       id: updatedUserDoc.id,
+       ...updatedUserDoc.data(),
+     };
+     this.render("dashboard");
+     lucide.createIcons();
+   } catch (error) {
+     console.error("Error claiming reward: ", error);
+     this.hideLoading();
+     this.showModal(
+       "error",
+       "Error",
+       "Could not claim your reward. Please try again."
+     );
+   }
+ };
   // Add this new function to handle the timer logic
   this.startDailyRewardTimer = () => {
     // Stop any existing timer to prevent multiple timers running at once
@@ -1738,7 +1759,7 @@ this.renderDashboardActions = () => {
       
       ${this.renderDashboardActions()} 
       
-      ${this.renderDashboardAnnouncement()}
+     <!-- ${this.renderDashboardAnnouncement()} -->
     </div>
   `;
     },
@@ -4978,6 +4999,7 @@ this.renderDashboardActions = () => {
       await setDoc(logRef, logData);
     }
   };
+
   this.handleLogin = async (e) => {
     e.preventDefault();
     const email = e.target.elements.email.value;
@@ -5227,7 +5249,6 @@ this.renderDashboardActions = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const updatedData = {
-      studentid: formData.get("studentid"),
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       skills: formData.get("skills"),
@@ -5677,35 +5698,97 @@ this.renderDashboardActions = () => {
     );
   };
   this.handleAdminUpdateUser = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const userId = formData.get("userId");
-    const user = this.state.users.find((u) => u.id === userId);
-    if (user) {
-      const beforePoints = user.points;
-      const afterPoints = parseInt(formData.get("points"), 10);
-      const updatedData = {
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        skills: formData.get("skills"),
-        points: afterPoints,
-        isValidated: formData.get("isValidated") === "on",
-      };
-      await updateDoc(doc(this.fb.db, this.paths.userDoc(userId)), updatedData);
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const userId = formData.get("userId");
+  const newValidatedState = formData.get("isValidated") === "on";
+
+  // Get the user document reference
+  const userRef = doc(this.fb.db, this.paths.userDoc(userId));
+
+  try {
+    // 1. Get the user's current data before making changes
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error("User document not found.");
+    }
+    const userData = userDoc.data();
+    const wasPreviouslyValidated = userData.isValidated || false;
+    const beforePoints = userData.points || 0;
+    const pointsForValidation = 50; // Points to award for approval
+
+    // Prepare the data for the update
+    const updatedData = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      skills: formData.get("skills"),
+      points: parseInt(formData.get("points"), 10), // Start with points from form
+      isValidated: newValidatedState,
+    };
+
+    // 2. Check if the user is being approved for the first time
+    if (newValidatedState && !wasPreviouslyValidated) {
+      console.log(`User ${userId} is being validated for the first time.`);
+
+      // Add approval points to the total
+      updatedData.points += pointsForValidation;
+      const afterPoints = updatedData.points;
+
+      // Create a batch to group our database writes
+      const batch = writeBatch(this.fb.db);
+
+      // Add a log to the user's personal point history
+      await this.addPointLog(
+        userId,
+        "Account approved by admin",
+        pointsForValidation,
+        batch,
+        beforePoints,
+        afterPoints
+      );
+
+      // Add a log to the main admin log for the approval action
+      await this.logAction(
+        "ACCOUNT_APPROVED",
+        `Approved ${userData.firstName} ${userData.lastName} and awarded ${pointsForValidation} points.`
+      );
+
+      // Add the main update to the batch
+      batch.update(userRef, updatedData);
+
+      // Commit all changes at once
+      await batch.commit();
+
+    } else {
+      // 3. If it's just a regular profile update (not a new approval)
+      await updateDoc(userRef, updatedData);
+
+      // Log the general admin update
       await this.logAction(
         "ADMIN_UPDATE_USER",
-        `Updated profile for ${user.firstName} ${user.lastName}.`,
-        { before: beforePoints, after: afterPoints }
+        `Updated profile for ${userData.firstName} ${userData.lastName}.`, {
+          before: beforePoints,
+          after: updatedData.points
+        }
       );
-      this.closeFullscreenModal();
-      this.showModal(
-        "success",
-        "Member Updated",
-        `${user.firstName}'s profile was updated.`
-      );
-      this.state.adminActiveTab = "members";
     }
-  };
+
+    this.closeFullscreenModal();
+    this.showModal(
+      "success",
+      "Member Updated",
+      `${userData.firstName}'s profile was updated successfully.`
+    );
+    this.state.adminActiveTab = "members";
+    // You might need to re-render or fetch data to see changes immediately
+    // this.render(); 
+
+  } catch (error) {
+    console.error("Failed to update user:", error);
+    this.showModal("error", "Update Failed", error.message);
+  }
+};
+
   this.handleAdminApproveUser = async (userId) => {
     const user = this.state.users.find((u) => u.id === userId);
     if (!user) return;
@@ -6532,21 +6615,25 @@ this.renderDashboardActions = () => {
       256
     );
   };
-  // (Line 2417)
+  
+
+  
   this.openPointsLogModal = () => {
-    const logs = this.state.pointLogs;
-    const content = `<div class="space-y-3">${
-      logs
+    // 1. Get a copy of the logs and reverse the order.
+    // The slice() method creates a shallow copy, so we don't modify the original state array.
+    const logs = [...this.state.pointLogs]; 
+    
+    const content = `<div class="space-y-3">${ logs
         .map(
           (log) =>
             `<div class="bg-gray-700 p-3 rounded-lg">
     <div class="flex justify-between items-center">
-        <p>${log.description}</p>
-        <p class="font-bold ${
-          log.points >= 0 ? "text-green-400" : "text-red-400"
-        }">
-            ${log.points >= 0 ? "+" : ""}${log.points} PTS
-        </p>
+      <p>${log.description}</p>
+      <p class="font-bold ${
+        log.points >= 0 ? "text-green-400" : "text-red-400"
+      }">
+        ${log.points >= 0 ? "+" : ""}${log.points} PTS
+      </p>
     </div>
     ${
       log.beforePoints !== undefined && log.afterPoints !== undefined
@@ -6750,4 +6837,6 @@ document.addEventListener("DOMContentLoaded", () => {
       app.openBadgeDetailsModal(name, description, icon, earned);
     }
   });
+  
 });
+

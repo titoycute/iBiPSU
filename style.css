@@ -55,11 +55,11 @@ body {
 }
 
 .floating-back-button:hover {
-  background-color: rgba(255, 234, 0, 0.9);
+  background-color: rgba(223, 219, 0, 0.9);
 }
 
 .pride-gradient-bg {
-  background: linear-gradient(135deg, yellow, #c5c200, yellow);
+  background: linear-gradient(135deg, yellow, #caa500, yellow);
 }
 
 .pride-gradient-text {
@@ -130,11 +130,11 @@ body.theme-default .chat-bubble-sender { background-color: #4f46e5 !important; }
 body.theme-default .chat-send-button { background-color: #4f46e5 !important; }
 
 body.theme-default .bg-gray-700 {
-  background-color: #000e90;
+  background-color: #000750;
 }
 
 body.theme-default .bg-gray-800 {
-  background-color: #000e90;
+  background-color: #000435;
 }
 
 body.theme-default .bg-gray-900 {
@@ -567,8 +567,8 @@ body.theme-rainbow .chat-send-button { background-color: #167ba3 !important; }
 
 /* Daily Rewards Theming */
 .reward-box-claimed {
-    background-color: #f59e0b !important; /* Default: Amber */
-    border-color: #f59e0b !important;
+    background-color: #ffffff !important; /* Default: Amber */
+    border-color: #ffffff !important;
 }
 
 .reward-box-claimable {
@@ -669,7 +669,7 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 
 /* --- Announcement Page Styles --- */
 .announcement-item {
-  background-color: #374151; /* bg-gray-700 */
+  background-color: #00012e; /* bg-gray-700 */
   border-radius: 0.75rem; /* rounded-xl */
   padding: 1rem; /* p-4 */
   cursor: pointer;
@@ -679,7 +679,7 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 }
 
 .announcement-item:hover {
-  border-left-color: #ec4899; /* A nice highlight color */
+  border-left-color: #f0ec00; /* A nice highlight color */
 }
 
 .announcement-header {
@@ -697,7 +697,7 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 
 /* State when the announcement is expanded */
 .announcement-item.expanded {
-  background-color: #4b5563; /* bg-gray-600 */
+  background-color:#000153; /* bg-gray-600 */
 }
 
 .announcement-item.expanded .announcement-content {
@@ -733,7 +733,7 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 .action-menu-toggle {
   width: 100%;
   height: 100%;
-  background-color: #e8e800; /* Your app's primary green */
+  background-color: #d8db00; /* Your app's primary green */
   color: white;
   border-radius: 50%;
   display: flex;
@@ -757,9 +757,9 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 }
 
 /* When the menu is open, rotate the '+' icon to an 'x' */
-.action-menu.open .action-menu-toggle {
+/* .action-menu.open .action-menu-toggle {
   transform: rotate(45deg);
-}
+} */
 
 .action-menu-item {
   position: absolute;

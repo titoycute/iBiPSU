@@ -187,10 +187,10 @@
 
            <div class="absolute left-1/2 -translate-x-1/2 -top-6">
             <button
-              onclick="app.navigateTo('scanner')"
+              onclick="event.preventDefault();app.navigateTo('scanner')"
               class="nav-button pride-gradient-bg w-20 h-20 flex items-center justify-center rounded-full shadow-lg text-white"
             >
-              <i data-lucide="scan-line" class="w-8 h-8"></i>
+              <i data-lucide="scan-line" class="w-8 h-8 text-[#000435]"></i>
             </button>
           </div> 
           
