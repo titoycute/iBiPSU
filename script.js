@@ -237,974 +237,6 @@ const App = function () {
     wakeLockSentinel: null,
   };
 
-  this.handleShowMoreDirectory = () => {
-    // Increase the number of users to display by 20
-    this.state.directoryDisplayCount += 20;
-    // Re-render the page to show the new users
-    this.render();
-  };
-
-  //PROFILE CARD
-  this.renderDashboardProfile = (user) => {
-    const earnedBadges = (user.earnedBadgeIds || [])
-      .map((badgeId) => this.state.badges.find((b) => b.id === badgeId))
-      .filter(Boolean)
-      .slice(0, 10);
-    return `
-    <div class="text-center pb-3 border-m border-gray-700"></div>
-    <div class="relative">
-        
-        
-        <div class="absolute -inset-1.5 pride-gradient-bg rounded-2xl blur-lg opacity-75"></div>
-            <div class="relative pride-gradient-bg p-1 rounded-2xl shadow-lg">
-            <div class="bg-[#000435]  rounded-xl p-4 space-y-4">
-                
-                <!-- START: ADD THIS NEW TITLE SECTION -->
-                <div class="text-center pb-3 border-b border-gray-700">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                        Member Card
-                    </h3>
-                </div>
-                <!-- END: ADD THIS NEW TITLE SECTION -->
-
-                <div class="flex space-x-4 items-center">
-                    <img src="${
-                      user.profilePic
-                    }" class="w-20 h-20 rounded-full object-cover border-4 border-gray-700">
-                    <div class="flex-1">
-                        <h3 class="text-l font-bold">${user.firstName} ${user.lastName }</h3>
-                         <h4 class="text-l font-bold">${user.studentid}</h4>
-                        <div class="flex items-center text-2xl font-bold pride-gradient-text mb-1">
-                            <i data-lucide="circle-star" class="w-7 h-7 mr-2 pride-gradient-text"></i>
-                            <span>${
-                              user.points || 0
-                            }</span><span class="text-sm pride-gradient-text ml-1"> PTS</span>
-                            
-                         
-                            </div>
-                            <p class="text-[12px] pride-gradient-text">Points in Peso: ₱${(
-                              (user.points || 0) / 50
-                            ).toFixed(2)}</p>
-                        <p class="text-[10px] text-gray-400">${
-                          user.email || "N/A"
-                        }</p>
-                        
-                    </div>
-                    <div class="bg-white p-1 rounded-lg cursor-pointer" onclick="app.openMemberQrModal()">
-                        <canvas id="member-qr-code"></canvas>
-                    </div>
-                </div>
-                ${
-                  earnedBadges.length > 0
-                    ? `
-                <div class="border-t border-gray-700 pt-3">
-                    <div class="flex items-center justify-center space-x-3">
-                        ${earnedBadges
-                          .map((badge) =>
-                            this.renderBadgeIcon(
-                              badge.icon,
-                              "w-6 h-6 text-amber-400"
-                            )
-                          )
-                          .join("")}
-                    </div>
-                </div>`
-                    : ""
-                }
-            </div>
-        </div>
-    </div>`;
-  };
-
-  // DASHBOARD CAROUSEL IMAGE
-  this.renderDashboardCarousel = () => {
-    const carouselItems = [
-      {
-        imageUrl:
-          "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzIwNW9pdzMyOTFna2ZjZ2V6dWZqMnJtNWg0N2x6NXJqdTQ4ZHN3MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TvG2o6Bob9saazDlu8/giphy.gif",
-        link: "rewards",
-      },
-      {
-        imageUrl:
-          "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjb4v0-af1ec6b9-6075-4a3c-b662-ed5512cb6fbf.png/v1/fit/w_800,h_450,q_70,strp/director_by_titoycute_dkjb4v0-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDUwIiwicGF0aCI6Ii9mLzIzNmVjZjk2LWE4ODEtNDI4ZC05MjEzLTgzZDFjNzMxMzEzMS9ka2piNHYwLWFmMWVjNmI5LTYwNzUtNGEzYy1iNjYyLWVkNTUxMmNiNmZiZi5wbmciLCJ3aWR0aCI6Ijw9ODAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.kIGGldx0F4f2G3KM_9AgMEk0QdiFctJP3vJbB8MhjOU",
-        link: "directory",
-      },
-      {
-        imageUrl:
-          "https://i.pinimg.com/1200x/fe/4d/a1/fe4da1dd4b4a61e5717ef1c73a169c99.jpg",
-        link: "leaderboard",
-      },
-    ];
-
-    return `
-    <div class="relative w-full">
-        <div class="carousel-container" id="dashboard-carousel">
-            ${carouselItems
-              .map(
-                (item) => `
-                <div class="carousel-item" 
-                     style="background-image: url('${item.imageUrl}')" 
-                     onclick="app.navigateTo('${item.link}')">
-                </div>
-            `
-              )
-              .join("")}
-        </div>
-        <button onclick="app.scrollCarousel(-1)" class="carousel-arrow left-0"><i data-lucide="chevron-left"></i></button>
-        <button onclick="app.scrollCarousel(1)" class="carousel-arrow right-0"><i data-lucide="chevron-right"></i></button>
-    </div>
-  `;
-  };
-
-  //DAILY REWARDS
-  this.renderDashboardDailyRewards = () => {
-    this.prepareLoginRewardState(this.state.loggedInUser);
-    const rewardState = this.state.loginReward || {
-      currentStreak: 0,
-      canClaim: false,
-    };
-
-    const rewardBoxes = [1, 2, 3, 4, 5]
-      .map((day) => {
-        const isClaimed = day <= rewardState.currentStreak;
-        const isClaimable =
-          rewardState.canClaim && day === rewardState.currentStreak + 1;
-        const points = DAILY_REWARD_POINTS[day - 1];
-
-        let boxClass = "bg-gray-700/50 border-2 border-gray-600";
-        // MINIMIZED: Text is smaller for a more compact look
-        let content = `<div class="font-bold text-gray-400 text-sm">${day}</div><div class="text-[10px] text-gray-500">${points} pts</div>`;
-        let onClick = "";
-        let finalHtml;
-
-        if (isClaimed) {
-          boxClass = "bg-yellow-500/30 border-2 border-yellow-500";
-          // MINIMIZED: Icon is smaller
-          content = `<i data-lucide="check-circle" class="w-6 h-6 text-yellow-400 mx-auto"></i>`;
-
-          // BLUR SHADOW EFFECT: We wrap the claimed box in a relative container
-          // with an absolute, blurred element behind it.
-          finalHtml = `
-        <div class="relative">
-          <div class="absolute -inset-1 bg-yellow-500 rounded-xl blur-lg opacity-60"></div>
-          <div class="relative rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}">
-            ${content}
-          </div>
-        </div>
-      `;
-        } else {
-          if (isClaimable) {
-            boxClass =
-              "bg-green-500/30 border-2 border-green-500 cursor-pointer animate-pulse";
-            // MINIMIZED: Text is smaller
-            content = `<div class="font-bold text-white text-sm">Claim</div><div class="text-xs text-green-300">${points} pts</div>`;
-            onClick = `onclick="app.claimDailyReward()"`;
-          }
-          // The non-claimed boxes don't get the glow wrapper
-          finalHtml = `<div class="rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}" ${onClick}>${content}</div>`;
-        }
-
-        return finalHtml;
-      })
-      .join("");
-
-    return `
-    <div class="mb-4">
-        <h3 class="text-s font-bold text-white mb-2">Daily Rewards</h3>
-        <div class="grid grid-cols-5 gap-3 text-center">
-            ${rewardBoxes}
-        </div>
-    </div>`;
-  };
-
-  //DASHBOARD BUTTONS
-  // Find and replace your ENTIRE renderDashboardActions function with this:
-this.renderDashboardActions = () => {
-    // This function now RETURNS the complete HTML for the circular menu.
-  return `
-        <div class="action-menu-container">
-            <div class="action-menu">
-                <button onclick="app.navigateTo('scanner')" class="action-menu-item" title="Scan QR Code">
-                    <i data-lucide="scan-qr-code" class="text-yellow-400"></i>
-                </button>
-                <button onclick="app.navigateTo('profile')" class="action-menu-item" title="My Profile">
-                    <i data-lucide="user-round-pen" class="text-yellow-400"></i>
-                </button>
-
-                <button onclick="app.navigateTo('qrSpots')" class="action-menu-item" title="QR Spots">
-                    <i data-lucide="map-pinned" class="text-yellow-400"></i>
-                </button>
-                <button onclick="app.navigateTo('directory')" class="action-menu-item" title="Members Directory">
-                    <i data-lucide="user-search" class="text-yellow-400"></i>
-                </button>
-                <button onclick="app.navigateTo('leaderboard')" class="action-menu-item" title="Ranks">
-                    <i data-lucide="trophy" class="text-yellow-400"></i>
-                </button>
-                <button onclick="app.navigateTo('announcements')" class="action-menu-item" title="Announcement">
-                    <i data-lucide="megaphone" class="text-yellow-400"></i>
-                </button>
-               
-                <button onclick="app.navigateTo('badges')" class="action-menu-item" title="Badges">
-                    <i data-lucide="award" class="text-yellow-400"></i>
-                </button>
-                
-                <button onclick="app.toggleActionMenu(event)" class="action-menu-toggle">
-                    <i data-lucide="menu" class="w-8 h-8 text-[#000435]"></i>
-                </button>
-            </div>
-        </div>
-    `;
-};
-
-  /**
-   * Renders the latest announcement for the dashboard.
-   */
-  this.renderDashboardAnnouncement = () => {
-    const latestAnnouncement = this.state.announcements[0];
-    if (!latestAnnouncement) return "";
-
-    return `
-      <div class="bg-gray-900/50 p-4 rounded-xl border-l-4 border-pink-500">
-          <div class="flex items-center justify-between mb-1">
-              <h3 class="font-bold text-lg text-pink-400">Announcement</h3>
-              <p class="text-xs text-gray-400">${latestAnnouncement.timestamp}</p>
-          </div>
-          <p class="text-gray-300">${latestAnnouncement.message}</p>
-      </div>
-    `;
-  };
-
-  // Add these new functions inside your App function in script.js
-
-  // Add these two new functions inside your App function in script.js
-
-  this.prepareLoginRewardState = (userData) => {
-    const today = new Date().toISOString().split("T")[0]; // Get date as "YYYY-MM-DD"
-    const lastLogin =
-      userData.lastLoginDate?.toDate().toISOString().split("T")[0] || null;
-
-    let currentStreak = userData.consecutiveLogins || 0;
-    let canClaim = false;
-
-    if (lastLogin !== today) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split("T")[0];
-
-      if (lastLogin !== yesterdayStr) {
-        // Streak is broken if last login wasn't yesterday
-        currentStreak = 0;
-      }
-
-      if (currentStreak >= 5) {
-        // Completed a 5-day cycle, so reset for a new one
-        currentStreak = 0;
-      }
-      canClaim = true;
-    }
-
-    this.state.loginReward = {
-      currentStreak,
-      canClaim,
-    };
-  };
-
-  // Replace your existing claimDailyReward function with this one
-
- this.claimDailyReward = async () => {
-   // 1. Check if the user can claim the reward
-   if (!this.state.loginReward.canClaim) {
-     this.showModal(
-       "error",
-       "Already Claimed",
-       "You have already claimed your reward for today."
-     );
-     return;
-   }
-
-   this.showLoading("Claiming Reward...");
-   const uid = this.fb.auth.currentUser.uid;
-   const userRef = doc(this.fb.db, this.paths.users, uid);
-
-   try {
-     // 2. Get the user's current points *before* making any changes
-     const userDoc = await getDoc(userRef);
-     if (!userDoc.exists()) {
-       throw new Error("User document does not exist.");
-     }
-     const userData = userDoc.data();
-     const beforePoints = userData.points || 0;
-
-     // 3. Determine the reward and calculate points after
-     const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
-     const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
-     const afterPoints = beforePoints + pointsToAdd;
-
-     // 4. Create a batch to perform multiple writes at once
-     const batch = writeBatch(this.fb.db);
-
-     // 5. Update the user's points and login streak in the batch
-     batch.update(userRef, {
-       points: increment(pointsToAdd),
-       consecutiveLogins: newStreak,
-       lastLoginDate: Timestamp.now(), // Use server timestamp for accuracy
-     });
-
-     // 6. Add to Points History Log (using your function)
-     const logDescription = `Claimed daily reward: Day ${newStreak} streak`;
-     this.addPointLog(
-       uid,
-       logDescription,
-       pointsToAdd,
-       batch,
-       beforePoints,
-       afterPoints
-     );
-
-     // 7. Add to Admin Log
-     this.logAction(
-       "DAILY_REWARD_CLAIM",
-       `${userData.firstName} ${userData.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`
-     );
-
-     // 8. Commit all the changes at once
-     await batch.commit();
-
-     // --- Update UI after successful claim ---
-     this.hideLoading();
-     this.showModal(
-       "success",
-       "Reward Claimed!",
-       `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
-     );
-
-     // Re-fetch user data to update the UI and state
-     const updatedUserDoc = await getDoc(userRef);
-     this.state.loggedInUser = {
-       id: updatedUserDoc.id,
-       ...updatedUserDoc.data(),
-     };
-     this.render("dashboard");
-     lucide.createIcons();
-   } catch (error) {
-     console.error("Error claiming reward: ", error);
-     this.hideLoading();
-     this.showModal(
-       "error",
-       "Error",
-       "Could not claim your reward. Please try again."
-     );
-   }
- };
-  // Add this new function to handle the timer logic
-  this.startDailyRewardTimer = () => {
-    // Stop any existing timer to prevent multiple timers running at once
-    if (this.state.dailyRewardTimerId) {
-      clearInterval(this.state.dailyRewardTimerId);
-    }
-
-    const timerElement = document.getElementById("daily-reward-timer");
-    if (!timerElement) {
-      return; // Exit if the timer element isn't on the page
-    }
-
-    const updateTimer = () => {
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0); // Midnight of the next day
-
-      const timeRemaining = tomorrow - now;
-
-      if (timeRemaining <= 0) {
-        clearInterval(this.state.dailyRewardTimerId);
-        this.state.dailyRewardTimerId = null;
-        this.render("dashboard"); // Re-render the dashboard to show the "Claim" button
-        return;
-      }
-
-      const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
-      const seconds = Math.floor((timeRemaining / 1000) % 60);
-
-      const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-        minutes
-      ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-      timerElement.textContent = `Next reward in: ${formattedTime}`;
-    };
-
-    // Run immediately and then every second
-    updateTimer();
-    this.state.dailyRewardTimerId = setInterval(updateTimer, 1000);
-  };
-
-  // Add this function to stop the timer
-  this.stopDailyRewardTimer = () => {
-    if (this.state.dailyRewardTimerId) {
-      clearInterval(this.state.dailyRewardTimerId);
-      this.state.dailyRewardTimerId = null;
-    }
-  };
-
-  // Replace your old downloadAttendees function with this one
-  this.downloadAttendees = async (eventId, eventName) => {
-    this.showLoading("Fetching attendee data...");
-
-    try {
-      // 1. Get all check-ins for the specified event
-      const checkInsRef = collection(this.fb.db, this.paths.checkIns);
-      const q = query(checkInsRef, where("eventId", "==", eventId));
-      const checkInsSnapshot = await getDocs(q);
-
-      if (checkInsSnapshot.empty) {
-        this.hideLoading();
-        this.showModal(
-          "info",
-          "No Attendees",
-          "There are no attendees for this event yet."
-        );
-        return;
-      }
-
-      // THIS IS THE CORRECTED PART
-      const attendeePromises = checkInsSnapshot.docs.map((checkInDoc) => {
-        // Variable renamed from 'doc' to 'checkInDoc'
-        const userId = checkInDoc.data().userId;
-        const userDocRef = doc(this.fb.db, this.paths.users, userId); // Now 'doc' correctly refers to the Firebase function
-        return getDoc(userDocRef);
-      });
-
-      const userDocs = await Promise.all(attendeePromises);
-      const attendees = userDocs.map((userDoc) => userDoc.data());
-
-      // 3. Convert the data to CSV format
-      let csvContent = "data:text/csv;charset=utf-8,";
-      // Add headers
-      csvContent += "Name,Email,Points\r\n";
-
-      // Add rows
-      attendees.forEach((attendee) => {
-        if (attendee) {
-          // Ensure attendee data exists
-          const fullName = `${attendee.firstName} ${attendee.lastName}`;
-          csvContent += `"${fullName}","${attendee.email}",${attendee.points}\r\n`;
-        }
-      });
-
-      // 4. Create a link and trigger the download
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-
-      // Sanitize the event name for the filename
-      const safeEventName = eventName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-      link.setAttribute("download", `${safeEventName}_attendees.csv`);
-
-      document.body.appendChild(link); // Required for Firefox
-      link.click();
-      document.body.removeChild(link);
-
-      this.hideLoading();
-    } catch (error) {
-      console.error("Error downloading attendees:", error);
-      this.hideLoading();
-      this.showModal(
-        "error",
-        "Download Failed",
-        "Could not download the attendee list. Please try again."
-      );
-    }
-  };
-
-  this.showLoading = (message) => {
-    this.elements.modalTitle.textContent = message || "Loading...";
-    this.elements.modalMessage.textContent = "Please wait a moment.";
-    this.elements.modalIcon.innerHTML = `<svg class="animate-spin h-10 w-10 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>`;
-    this.elements.modalButtons.innerHTML = ""; // No buttons for loading
-    this.elements.modal.classList.remove("hidden");
-  };
-
-  this.hideLoading = () => {
-    this.elements.modal.classList.add("hidden");
-  };
-  // --- Chat Functionality ---
-
-  // In script.js, replace your first 'openChat' function with this
-
-  this.openChat = (chatId) => {
-    // --- START: ADDED SECTION ---
-    // Reset unread count for the current user when they open the chat
-    const currentUser = this.state.loggedInUser;
-    if (currentUser && chatId) {
-      const chatRef = doc(this.fb.db, this.paths.chatDoc(chatId));
-      // We use dot notation to update a specific field in the map
-      updateDoc(chatRef, {
-        [`unreadCount.${currentUser.id}`]: 0,
-      }).catch((error) =>
-        console.error("Error resetting unread count:", error)
-      );
-    }
-    // --- END: ADDED SECTION ---
-
-    this.state.currentChatId = chatId;
-    this.detachChatListeners(); // Remove old message listeners
-    this.listenToChatMessages(chatId);
-    this.navigateTo("messages");
-
-    setTimeout(() => {
-      const messagesContainer = document.getElementById("messages-container");
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    }, 100);
-  };
-
-  this.listenToUsers = () => {
-    const usersCollectionRef = collection(this.fb.db, this.paths.users);
-    const q = query(usersCollectionRef);
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // Update the local state with the latest user data
-        this.state.users = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        // Re-render the chat list and active chat views to show updated status
-        if (this.state.currentPage === "messages") {
-          this.render();
-        }
-      },
-      (error) => {
-        console.error("Error listening to users:", error);
-      }
-    );
-
-    // Save the unsubscribe function to the general listeners array
-    this.state.listeners.push(unsubscribe);
-  };
-
-  this.listenToChatMessages = (chatId) => {
-    if (!chatId) return;
-
-    this.detachChatListeners();
-
-    // Reset state for the new chat
-    this.state.allMessagesLoaded = false;
-    this.state.firstVisibleMessage = null;
-    this.state.currentChatMessages = [];
-
-    const q = query(
-      collection(this.fb.db, this.paths.messages(chatId)),
-      orderBy("timestamp", "desc"),
-      limit(15)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        // **THIS IS THE FIX**: We only assume all messages are loaded
-        // if the number of documents returned is LESS than our limit of 15.
-        // If it returns exactly 15, there might be more.
-        this.state.allMessagesLoaded = snapshot.docs.length < 15;
-
-        if (!snapshot.empty) {
-          // Save the oldest message from this batch as our cursor
-          this.state.firstVisibleMessage =
-            snapshot.docs[snapshot.docs.length - 1];
-        }
-
-        // Reverse the array to display chronologically
-        this.state.currentChatMessages = snapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .reverse();
-
-        // Render the UI and then scroll to the bottom
-        this.render();
-        this.postRender(); // Call postRender to handle scrolling
-      },
-      (error) => console.error("Error listening to messages:", error)
-    );
-
-    this.state.chatListeners.push(unsubscribe);
-  };
-
-  // This is the entire loadMoreMessages function for reference
-  this.loadMoreMessages = async () => {
-    if (!this.state.currentChatId || this.state.allMessagesLoaded) return;
-
-    const container = document.getElementById("messages-container");
-    const oldScrollHeight = container.scrollHeight;
-
-    const q = query(
-      collection(this.fb.db, this.paths.messages(this.state.currentChatId)),
-      orderBy("timestamp", "desc"),
-      startAfter(this.state.firstVisibleMessage),
-      limit(10) // <--- CHANGE THIS LINE
-    );
-
-    const snapshot = await getDocs(q);
-
-    if (!snapshot.empty) {
-      this.state.firstVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
-
-      const olderMessages = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .reverse();
-      this.state.currentChatMessages = [
-        ...olderMessages,
-        ...this.state.currentChatMessages,
-      ];
-
-      if (snapshot.docs.length < 10) {
-        // <--- AND CHANGE THIS LINE
-        this.state.allMessagesLoaded = true;
-      }
-    } else {
-      this.state.allMessagesLoaded = true;
-    }
-    this.render();
-    setTimeout(() => {
-      const newScrollHeight = container.scrollHeight;
-      container.scrollTop = newScrollHeight - oldScrollHeight;
-    }, 10);
-  };
-
-  this.detachChatListeners = () => {
-    this.state.chatListeners.forEach((unsub) => unsub());
-    this.state.chatListeners = [];
-  };
-
-  // Sends a message in the current chat
-  this.sendMessage = async (e) => {
-    e.preventDefault();
-    const messageText = e.target.elements.messageText.value.trim();
-    if (!messageText || !this.state.currentChatId || !this.state.loggedInUser) {
-      return;
-    }
-
-    // 1. Create a temporary message for an instant UI update.
-    const optimisticMessage = {
-      id: `temp_${Date.now()}`,
-      senderId: this.state.loggedInUser.id,
-      text: messageText,
-      timestamp: Timestamp.now(), // Use local time for immediate display
-    };
-
-    // 2. Add the message to the local state and clear the input field.
-    this.state.currentChatMessages.push(optimisticMessage);
-    e.target.reset();
-
-    // 3. Re-render the UI to show the new message right away.
-    this.render();
-
-    // 4. Scroll to the bottom to view the newly sent message.
-    setTimeout(() => {
-      const messagesContainer = document.getElementById("messages-container");
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    }, 50);
-
-    try {
-      // 5. In the background, send the actual message to the database.
-      const chatRef = doc(
-        this.fb.db,
-        this.paths.chatDoc(this.state.currentChatId)
-      );
-      const messagesCollectionRef = collection(chatRef, "messages");
-
-      await addDoc(messagesCollectionRef, {
-        senderId: this.state.loggedInUser.id,
-        text: messageText,
-        timestamp: Timestamp.now(),
-      });
-
-      // Update the parent chat document with the last message info.
-      await updateDoc(chatRef, {
-        lastMessage: messageText,
-        lastMessageTimestamp: Timestamp.now(),
-      });
-
-      // The real-time listener will automatically refresh the chat
-      // with the final message from the server, replacing the temporary one.
-    } catch (error) {
-      console.error("Error sending message:", error);
-      this.showModal("error", "Message Error", "Failed to send message.");
-
-      // If sending fails, remove the optimistic message from the UI.
-      this.state.currentChatMessages = this.state.currentChatMessages.filter(
-        (msg) => msg.id !== optimisticMessage.id
-      );
-      this.render(); // Re-render to show the message has been removed.
-    }
-  };
-  //UNSEND MESSAGE//
-  this.unsendMessage = (chatId, messageId) => {
-    if (!chatId || !messageId) return;
-
-    this.showModal(
-      "confirm",
-      "Unsend Message?",
-      "This will permanently delete the message. This action cannot be undone.",
-      async () => {
-        try {
-          const messageRef = doc(
-            this.fb.db,
-            this.paths.messages(chatId),
-            messageId
-          );
-          await updateDoc(messageRef, {
-            isRemoved: true,
-            text: "This message was removed.",
-          });
-
-          // NOTE: The real-time listener will automatically update the UI.
-          // For a more advanced implementation, you could update the `lastMessage`
-          // on the parent chat document if this was the last message.
-        } catch (error) {
-          console.error("Error unsending message:", error);
-          this.showModal("error", "Error", "Could not unsend the message.");
-        }
-      }
-    );
-  };
-
-  // Initiates a chat with a specific user from the directory
-  this.startChatWithUser = async (targetUserId) => {
-    const currentUser = this.state.loggedInUser;
-    if (!currentUser || !targetUserId || currentUser.id === targetUserId) {
-      this.showModal("error", "Chat Error", "Cannot start chat.");
-      return;
-    }
-
-    // Check if chat exists
-    const q = query(
-      collection(this.fb.db, this.paths.chats),
-      where("participants", "array-contains", currentUser.id)
-    );
-    const snapshot = await getDocs(q);
-
-    let existingChatId = null;
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      if (
-        data.participants.includes(targetUserId) &&
-        data.participants.length === 2
-      ) {
-        existingChatId = doc.id;
-      }
-    });
-
-    if (existingChatId) {
-      this.openChat(existingChatId);
-    } else {
-      // Create new chat
-
-      const newChatRef = await addDoc(
-        collection(this.fb.db, this.paths.chats),
-        {
-          participants: [currentUser.id, targetUserId],
-          createdAt: Timestamp.now(),
-          type: "direct",
-          lastMessage: "",
-          lastMessageTimestamp: Timestamp.now(),
-          // --- ADD THIS OBJECT ---
-          unreadCount: {
-            [currentUser.id]: 0,
-            [targetUserId]: 0,
-          },
-        }
-      );
-      this.openChat(newChatRef.id);
-    }
-  };
-
-  // Closes the active chat and returns to the chat list
-  this.closeChat = () => {
-    // Check if there's a chat open and a logged-in user
-    const currentUser = this.state.loggedInUser;
-    const currentChatId = this.state.currentChatId;
-
-    if (currentUser && currentChatId) {
-      const chatRef = doc(this.fb.db, this.paths.chatDoc(currentChatId));
-      // Reset unread count for the current user when they close the chat
-      updateDoc(chatRef, {
-        [`unreadCount.${currentUser.id}`]: 0,
-      }).catch((error) =>
-        console.error("Error resetting unread count:", error)
-      );
-    }
-
-    this.state.currentChatId = null;
-    this.state.currentChatMessages = [];
-    this.detachChatListeners(); // Detach messages listener
-    this.listenToUserChats();
-    this.navigateTo("messages"); // Navigate back to the messages view (which will show the list)
-  };
-
-  // Sends a message in the current chat
-  // In script.js, replace your first 'sendMessage' function with this
-
-  this.sendMessage = async (e) => {
-    e.preventDefault();
-    const messageText = e.target.elements.messageText.value.trim();
-    if (!messageText || !this.state.currentChatId || !this.state.loggedInUser) {
-      return;
-    }
-
-    const optimisticMessage = {
-      id: `temp_${Date.now()}`,
-      senderId: this.state.loggedInUser.id,
-      text: messageText,
-      timestamp: Timestamp.now(),
-    };
-
-    this.state.currentChatMessages.push(optimisticMessage);
-    e.target.reset();
-    this.render();
-
-    setTimeout(() => {
-      const messagesContainer = document.getElementById("messages-container");
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    }, 50);
-
-    try {
-      const chatRef = doc(
-        this.fb.db,
-        this.paths.chatDoc(this.state.currentChatId)
-      );
-      const messagesCollectionRef = collection(chatRef, "messages");
-
-      await addDoc(messagesCollectionRef, {
-        senderId: this.state.loggedInUser.id,
-        text: messageText,
-        timestamp: Timestamp.now(),
-      });
-
-      // --- START: MODIFIED SECTION ---
-      // Find the current chat to get participant info
-      const currentChat = this.state.chats.find(
-        (c) => c.id === this.state.currentChatId
-      );
-      if (!currentChat) {
-        console.error("Could not find chat to update unread counts.");
-        return;
-      }
-
-      const otherParticipants = currentChat.participants.filter(
-        (pId) => pId !== this.state.loggedInUser.id
-      );
-
-      // Prepare the updates for the parent chat document
-      const updates = {
-        lastMessage: messageText,
-        lastMessageTimestamp: Timestamp.now(),
-      };
-
-      // Increment the unread count for every other participant
-      otherParticipants.forEach((pId) => {
-        updates[`unreadCount.${pId}`] = increment(1);
-      });
-
-      await updateDoc(chatRef, updates);
-      // --- END: MODIFIED SECTION ---
-    } catch (error) {
-      console.error("Error sending message:", error);
-      this.showModal("error", "Message Error", "Failed to send message.");
-
-      this.state.currentChatMessages = this.state.currentChatMessages.filter(
-        (msg) => msg.id !== optimisticMessage.id
-      );
-      this.render();
-    }
-  };
-
-  // Listens to real-time updates for the current user's chats list
-
-  this.listenToUserChats = () => {
-    if (!this.state.loggedInUser) {
-      console.log("No logged in user, skipping chat listener");
-      return;
-    }
-
-    // The .orderBy clause has been removed from this query to prevent the indexing error.
-    const q = query(
-      collection(this.fb.db, this.paths.chats),
-      where("participants", "array-contains", this.state.loggedInUser.id)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        console.log("Chats snapshot received:", snapshot.docs.length);
-        this.state.chats = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log("Chats updated:", this.state.chats);
-        if (
-          this.state.currentPage === "messages" &&
-          !this.state.currentChatId
-        ) {
-          this.render();
-        }
-      },
-      (error) => {
-        console.error("Error listening to user chats:", error);
-      }
-    );
-
-    this.state.chatListeners.push(unsubscribe);
-  };
-
-  // Detaches all chat-related real-time listeners
-  this.detachChatListeners = () => {
-    this.state.chatListeners.forEach((unsubscribe) => unsubscribe());
-    this.state.chatListeners = [];
-  };
-
-  // Helper to format timestamps for display
-  this.formatTimestamp = (timestamp, includeTime = false) => {
-    if (!timestamp) return "";
-    const date = timestamp.toDate();
-    const options = { month: "short", day: "numeric" };
-    if (includeTime) {
-      options.hour = "2-digit";
-      options.minute = "2-digit";
-      options.hour12 = true;
-    }
-    return date.toLocaleString("en-US", options);
-  };
-
-  // Helper to format timestamps for relative time
-  this.formatRelativeTime = (timestamp) => {
-    if (!timestamp || !timestamp.toDate) return "never";
-    const now = new Date();
-    const date = timestamp.toDate();
-    const seconds = Math.floor((now - date) / 1000);
-
-    let interval = seconds / 31536000;
-    if (interval > 1) return `${Math.floor(interval)}y ago`;
-    interval = seconds / 2592000;
-    if (interval > 1) return `${Math.floor(interval)}mo ago`;
-    interval = seconds / 86400;
-    if (interval > 1) return `Offline`; // Simplified for clarity
-    interval = seconds / 3600;
-    if (interval > 1) return `${Math.floor(interval)}h ago`;
-    interval = seconds / 60;
-    if (interval > 1) return `${Math.floor(interval)}m ago`;
-    return "Online"; // If less than a minute, assume online
-  };
-
   // ... rest of methods ...
 
   // --- FIREBASE INSTANCES ---
@@ -2991,6 +2023,979 @@ this.renderDashboardActions = () => {
       </div>`;
     },
   };
+
+  this.handleShowMoreDirectory = () => {
+    // Increase the number of users to display by 20
+    this.state.directoryDisplayCount += 20;
+    // Re-render the page to show the new users
+    this.render();
+  };
+
+  //PROFILE CARD
+  this.renderDashboardProfile = (user) => {
+    const earnedBadges = (user.earnedBadgeIds || [])
+      .map((badgeId) => this.state.badges.find((b) => b.id === badgeId))
+      .filter(Boolean)
+      .slice(0, 10);
+    return `
+    <div class="text-center pb-3 border-m border-gray-700"></div>
+    <div class="relative">
+        
+        
+        <div class="absolute -inset-1.5 pride-gradient-bg rounded-2xl blur-lg opacity-75"></div>
+            <div class="relative pride-gradient-bg p-1 rounded-2xl shadow-lg">
+            <div class="bg-[#000435]  rounded-xl p-4 space-y-4">
+                
+                <!-- START: ADD THIS NEW TITLE SECTION -->
+                <div class="text-center pb-3 border-b border-gray-700">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                        Member Card
+                    </h3>
+                </div>
+                <!-- END: ADD THIS NEW TITLE SECTION -->
+
+                <div class="flex space-x-4 items-center">
+                    <img src="${
+                      user.profilePic
+                    }" class="w-20 h-20 rounded-full object-cover border-4 border-gray-700">
+                    <div class="flex-1">
+                        <h3 class="text-l font-bold">${user.firstName} ${user.lastName }</h3>
+                         <h4 class="text-l font-bold">${user.studentid}</h4>
+                        <div class="flex items-center text-2xl font-bold pride-gradient-text mb-1">
+                            <i data-lucide="circle-star" class="w-7 h-7 mr-2 pride-gradient-text"></i>
+                            <span>${
+                              user.points || 0
+                            }</span><span class="text-sm pride-gradient-text ml-1"> PTS</span>
+                            
+                         
+                            </div>
+                            <!-- POINTS IN PESO
+                            <p class="text-[12px] pride-gradient-text">
+                            Points in Peso: ₱${((user.points || 0) / 50 ).toFixed(2)}</p>
+                            -->
+                        <p class="text-[10px] text-gray-400">${
+                          user.email || "N/A"
+                        }</p>
+                        
+                    </div>
+                    <div class="bg-white p-1 rounded-lg cursor-pointer" onclick="app.openMemberQrModal()">
+                        <canvas id="member-qr-code"></canvas>
+                    </div>
+                </div>
+                ${
+                  earnedBadges.length > 0
+                    ? `
+                <div class="border-t border-gray-700 pt-3">
+                    <div class="flex items-center justify-center space-x-3">
+                        ${earnedBadges
+                          .map((badge) =>
+                            this.renderBadgeIcon(
+                              badge.icon,
+                              "w-6 h-6 text-amber-400"
+                            )
+                          )
+                          .join("")}
+                    </div>
+                </div>`
+                    : ""
+                }
+            </div>
+        </div>
+    </div>`;
+  };
+
+  // DASHBOARD CAROUSEL IMAGE
+  this.renderDashboardCarousel = () => {
+    const carouselItems = [
+      {
+        imageUrl:
+          "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzIwNW9pdzMyOTFna2ZjZ2V6dWZqMnJtNWg0N2x6NXJqdTQ4ZHN3MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TvG2o6Bob9saazDlu8/giphy.gif",
+        link: "rewards",
+      },
+      {
+        imageUrl:
+          "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/236ecf96-a881-428d-9213-83d1c7313131/dkjb4v0-af1ec6b9-6075-4a3c-b662-ed5512cb6fbf.png/v1/fit/w_800,h_450,q_70,strp/director_by_titoycute_dkjb4v0-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NDUwIiwicGF0aCI6Ii9mLzIzNmVjZjk2LWE4ODEtNDI4ZC05MjEzLTgzZDFjNzMxMzEzMS9ka2piNHYwLWFmMWVjNmI5LTYwNzUtNGEzYy1iNjYyLWVkNTUxMmNiNmZiZi5wbmciLCJ3aWR0aCI6Ijw9ODAwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.kIGGldx0F4f2G3KM_9AgMEk0QdiFctJP3vJbB8MhjOU",
+        link: "directory",
+      },
+      {
+        imageUrl:
+          "https://i.pinimg.com/1200x/fe/4d/a1/fe4da1dd4b4a61e5717ef1c73a169c99.jpg",
+        link: "leaderboard",
+      },
+    ];
+
+    return `
+    <div class="relative w-full">
+        <div class="carousel-container" id="dashboard-carousel">
+            ${carouselItems
+              .map(
+                (item) => `
+                <div class="carousel-item" 
+                     style="background-image: url('${item.imageUrl}')" 
+                     onclick="app.navigateTo('${item.link}')">
+                </div>
+            `
+              )
+              .join("")}
+        </div>
+        <button onclick="app.scrollCarousel(-1)" class="carousel-arrow left-0"><i data-lucide="chevron-left"></i></button>
+        <button onclick="app.scrollCarousel(1)" class="carousel-arrow right-0"><i data-lucide="chevron-right"></i></button>
+    </div>
+  `;
+  };
+
+  //DAILY REWARDS
+  this.renderDashboardDailyRewards = () => {
+    this.prepareLoginRewardState(this.state.loggedInUser);
+    const rewardState = this.state.loginReward || {
+      currentStreak: 0,
+      canClaim: false,
+    };
+
+    const rewardBoxes = [1, 2, 3, 4, 5]
+      .map((day) => {
+        const isClaimed = day <= rewardState.currentStreak;
+        const isClaimable =
+          rewardState.canClaim && day === rewardState.currentStreak + 1;
+        const points = DAILY_REWARD_POINTS[day - 1];
+
+        let boxClass = "bg-gray-700/50 border-2 border-gray-600";
+        // MINIMIZED: Text is smaller for a more compact look
+        let content = `<div class="font-bold text-gray-400 text-sm">${day}</div><div class="text-[10px] text-gray-500">${points} pts</div>`;
+        let onClick = "";
+        let finalHtml;
+
+        if (isClaimed) {
+          boxClass = "bg-yellow-500/30 border-2 border-yellow-500";
+          // MINIMIZED: Icon is smaller
+          content = `<i data-lucide="check-circle" class="w-6 h-6 text-yellow-400 mx-auto"></i>`;
+
+          // BLUR SHADOW EFFECT: We wrap the claimed box in a relative container
+          // with an absolute, blurred element behind it.
+          finalHtml = `
+        <div class="relative">
+          <div class="absolute -inset-1 bg-yellow-500 rounded-xl blur-lg opacity-60"></div>
+          <div class="relative rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}">
+            ${content}
+          </div>
+        </div>
+      `;
+        } else {
+          if (isClaimable) {
+            boxClass =
+              "bg-green-500/30 border-2 border-green-500 cursor-pointer animate-pulse";
+            // MINIMIZED: Text is smaller
+            content = `<div class="font-bold text-white text-sm">Claim</div><div class="text-xs text-green-300">${points} pts</div>`;
+            onClick = `onclick="app.claimDailyReward()"`;
+          }
+          // The non-claimed boxes don't get the glow wrapper
+          finalHtml = `<div class="rounded-lg p-2 aspect-square flex flex-col justify-center items-center ${boxClass}" ${onClick}>${content}</div>`;
+        }
+
+        return finalHtml;
+      })
+      .join("");
+
+    return `
+    <div class="mb-4">
+        <h3 class="text-s font-bold text-white mb-2">Daily Rewards</h3>
+        <div class="grid grid-cols-5 gap-3 text-center">
+            ${rewardBoxes}
+        </div>
+    </div>`;
+  };
+
+  //DASHBOARD BUTTONS
+  // Find and replace your ENTIRE renderDashboardActions function with this:
+this.renderDashboardActions = () => {
+    // This function now RETURNS the complete HTML for the circular menu.
+  return `
+        <div class="action-menu-container">
+            <div class="action-menu">
+                <button onclick="app.navigateTo('scanner')" class="action-menu-item" title="Scan QR Code">
+                    <i data-lucide="scan-qr-code" class="text-yellow-400"></i>
+                </button>
+                <button onclick="app.navigateTo('profile')" class="action-menu-item" title="My Profile">
+                    <i data-lucide="user-round-pen" class="text-yellow-400"></i>
+                </button>
+
+                <button onclick="app.navigateTo('qrSpots')" class="action-menu-item" title="QR Spots">
+                    <i data-lucide="map-pinned" class="text-yellow-400"></i>
+                </button>
+                <button onclick="app.navigateTo('directory')" class="action-menu-item" title="Members Directory">
+                    <i data-lucide="user-search" class="text-yellow-400"></i>
+                </button>
+                <button onclick="app.navigateTo('leaderboard')" class="action-menu-item" title="Ranks">
+                    <i data-lucide="trophy" class="text-yellow-400"></i>
+                </button>
+                <button onclick="app.navigateTo('announcements')" class="action-menu-item" title="Announcement">
+                    <i data-lucide="megaphone" class="text-yellow-400"></i>
+                </button>
+               
+                <button onclick="app.navigateTo('badges')" class="action-menu-item" title="Badges">
+                    <i data-lucide="award" class="text-yellow-400"></i>
+                </button>
+                
+                <button onclick="app.toggleActionMenu(event)" class="action-menu-toggle">
+                    <i data-lucide="menu" class="w-8 h-8 text-[#000435]"></i>
+                </button>
+            </div>
+        </div>
+    `;
+};
+
+  /**
+   * Renders the latest announcement for the dashboard.
+   */
+  this.renderDashboardAnnouncement = () => {
+    const latestAnnouncement = this.state.announcements[0];
+    if (!latestAnnouncement) return "";
+
+    return `
+      <div class="bg-gray-900/50 p-4 rounded-xl border-l-4 border-pink-500">
+          <div class="flex items-center justify-between mb-1">
+              <h3 class="font-bold text-lg text-pink-400">Announcement</h3>
+              <p class="text-xs text-gray-400">${latestAnnouncement.timestamp}</p>
+          </div>
+          <p class="text-gray-300">${latestAnnouncement.message}</p>
+      </div>
+    `;
+  };
+
+   this.startDailyRewardTimer = () => {
+    // Stop any existing timer to prevent multiple timers running at once
+    if (this.state.dailyRewardTimerId) {
+      clearInterval(this.state.dailyRewardTimerId);
+    }
+
+    const timerElement = document.getElementById("daily-reward-timer");
+    if (!timerElement) {
+      return; // Exit if the timer element isn't on the page
+    }
+
+    const updateTimer = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0); // Midnight of the next day
+
+      const timeRemaining = tomorrow - now;
+
+      if (timeRemaining <= 0) {
+        clearInterval(this.state.dailyRewardTimerId);
+        this.state.dailyRewardTimerId = null;
+        this.render("dashboard"); // Re-render the dashboard to show the "Claim" button
+        return;
+      }
+
+      const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((timeRemaining / (1000 * 60)) % 60);
+      const seconds = Math.floor((timeRemaining / 1000) % 60);
+
+      const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+        minutes
+      ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+      timerElement.textContent = `Next reward in: ${formattedTime}`;
+    };
+
+    // Run immediately and then every second
+    updateTimer();
+    this.state.dailyRewardTimerId = setInterval(updateTimer, 1000);
+  };
+
+  // Add this function to stop the timer
+  this.stopDailyRewardTimer = () => {
+    if (this.state.dailyRewardTimerId) {
+      clearInterval(this.state.dailyRewardTimerId);
+      this.state.dailyRewardTimerId = null;
+    }
+  };
+
+  // Add these new functions inside your App function in script.js
+
+  // Add these two new functions inside your App function in script.js
+
+  this.prepareLoginRewardState = (userData) => {
+    const today = new Date().toISOString().split("T")[0]; // Get date as "YYYY-MM-DD"
+    const lastLogin =
+      userData.lastLoginDate?.toDate().toISOString().split("T")[0] || null;
+
+    let currentStreak = userData.consecutiveLogins || 0;
+    let canClaim = false;
+
+    if (lastLogin !== today) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+      if (lastLogin !== yesterdayStr) {
+        // Streak is broken if last login wasn't yesterday
+        currentStreak = 0;
+      }
+
+      if (currentStreak >= 5) {
+        // Completed a 5-day cycle, so reset for a new one
+        currentStreak = 0;
+      }
+      canClaim = true;
+    }
+
+    this.state.loginReward = {
+      currentStreak,
+      canClaim,
+    };
+  };
+
+  // Replace your existing claimDailyReward function with this one
+
+ this.claimDailyReward = async () => {
+   // 1. Check if the user can claim the reward
+   if (!this.state.loginReward.canClaim) {
+     this.showModal(
+       "error",
+       "Already Claimed",
+       "You have already claimed your reward for today."
+     );
+     return;
+   }
+
+   this.showLoading("Claiming Reward...");
+   const uid = this.fb.auth.currentUser.uid;
+   const userRef = doc(this.fb.db, this.paths.users, uid);
+
+   try {
+     // 2. Get the user's current points *before* making any changes
+     const userDoc = await getDoc(userRef);
+     if (!userDoc.exists()) {
+       throw new Error("User document does not exist.");
+     }
+     const userData = userDoc.data();
+     const beforePoints = userData.points || 0;
+
+     // 3. Determine the reward and calculate points after
+     const newStreak = (this.state.loginReward.currentStreak % 5) + 1;
+     const pointsToAdd = DAILY_REWARD_POINTS[newStreak - 1];
+     const afterPoints = beforePoints + pointsToAdd;
+
+     // 4. Create a batch to perform multiple writes at once
+     const batch = writeBatch(this.fb.db);
+
+     // 5. Update the user's points and login streak in the batch
+     batch.update(userRef, {
+       points: increment(pointsToAdd),
+       consecutiveLogins: newStreak,
+       lastLoginDate: Timestamp.now(), // Use server timestamp for accuracy
+     });
+
+     // 6. Add to Points History Log (using your function)
+     const logDescription = `Claimed daily reward: Day ${newStreak} streak`;
+     this.addPointLog(
+       uid,
+       logDescription,
+       pointsToAdd,
+       batch,
+       beforePoints,
+       afterPoints
+     );
+
+     // 7. Add to Admin Log
+     this.logAction(
+       "DAILY_REWARD_CLAIM",
+       `${userData.firstName} ${userData.lastName} claimed ${pointsToAdd} points for their Day ${newStreak} streak.`
+     );
+
+     // 8. Commit all the changes at once
+     await batch.commit();
+
+     // --- Update UI after successful claim ---
+     this.hideLoading();
+     this.showModal(
+       "success",
+       "Reward Claimed!",
+       `You have earned ${pointsToAdd} points! Your streak is now ${newStreak} days.`
+     );
+
+     // Re-fetch user data to update the UI and state
+     const updatedUserDoc = await getDoc(userRef);
+     this.state.loggedInUser = {
+       id: updatedUserDoc.id,
+       ...updatedUserDoc.data(),
+     };
+     this.render("dashboard");
+     lucide.createIcons();
+   } catch (error) {
+     console.error("Error claiming reward: ", error);
+     this.hideLoading();
+     this.showModal(
+       "error",
+       "Error",
+       "Could not claim your reward. Please try again."
+     );
+   }
+ };
+  // Add this new function to handle the timer logic
+ 
+
+  // Replace your old downloadAttendees function with this one
+  this.downloadAttendees = async (eventId, eventName) => {
+    this.showLoading("Fetching attendee data...");
+
+    try {
+      // 1. Get all check-ins for the specified event
+      const checkInsRef = collection(this.fb.db, this.paths.checkIns);
+      const q = query(checkInsRef, where("eventId", "==", eventId));
+      const checkInsSnapshot = await getDocs(q);
+
+      if (checkInsSnapshot.empty) {
+        this.hideLoading();
+        this.showModal(
+          "info",
+          "No Attendees",
+          "There are no attendees for this event yet."
+        );
+        return;
+      }
+
+      // THIS IS THE CORRECTED PART
+      const attendeePromises = checkInsSnapshot.docs.map((checkInDoc) => {
+        // Variable renamed from 'doc' to 'checkInDoc'
+        const userId = checkInDoc.data().userId;
+        const userDocRef = doc(this.fb.db, this.paths.users, userId); // Now 'doc' correctly refers to the Firebase function
+        return getDoc(userDocRef);
+      });
+
+      const userDocs = await Promise.all(attendeePromises);
+      const attendees = userDocs.map((userDoc) => userDoc.data());
+
+      // 3. Convert the data to CSV format
+      let csvContent = "data:text/csv;charset=utf-8,";
+      // Add headers
+      csvContent += "Name,Email,Points\r\n";
+
+      // Add rows
+      attendees.forEach((attendee) => {
+        if (attendee) {
+          // Ensure attendee data exists
+          const fullName = `${attendee.firstName} ${attendee.lastName}`;
+          csvContent += `"${fullName}","${attendee.email}",${attendee.points}\r\n`;
+        }
+      });
+
+      // 4. Create a link and trigger the download
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+
+      // Sanitize the event name for the filename
+      const safeEventName = eventName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+      link.setAttribute("download", `${safeEventName}_attendees.csv`);
+
+      document.body.appendChild(link); // Required for Firefox
+      link.click();
+      document.body.removeChild(link);
+
+      this.hideLoading();
+    } catch (error) {
+      console.error("Error downloading attendees:", error);
+      this.hideLoading();
+      this.showModal(
+        "error",
+        "Download Failed",
+        "Could not download the attendee list. Please try again."
+      );
+    }
+  };
+
+  this.showLoading = (message) => {
+    this.elements.modalTitle.textContent = message || "Loading...";
+    this.elements.modalMessage.textContent = "Please wait a moment.";
+    this.elements.modalIcon.innerHTML = `<svg class="animate-spin h-10 w-10 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>`;
+    this.elements.modalButtons.innerHTML = ""; // No buttons for loading
+    this.elements.modal.classList.remove("hidden");
+  };
+
+  this.hideLoading = () => {
+    this.elements.modal.classList.add("hidden");
+  };
+  // --- Chat Functionality ---
+
+  // In script.js, replace your first 'openChat' function with this
+
+  this.openChat = (chatId) => {
+    // --- START: ADDED SECTION ---
+    // Reset unread count for the current user when they open the chat
+    const currentUser = this.state.loggedInUser;
+    if (currentUser && chatId) {
+      const chatRef = doc(this.fb.db, this.paths.chatDoc(chatId));
+      // We use dot notation to update a specific field in the map
+      updateDoc(chatRef, {
+        [`unreadCount.${currentUser.id}`]: 0,
+      }).catch((error) =>
+        console.error("Error resetting unread count:", error)
+      );
+    }
+    // --- END: ADDED SECTION ---
+
+    this.state.currentChatId = chatId;
+    this.detachChatListeners(); // Remove old message listeners
+    this.listenToChatMessages(chatId);
+    this.navigateTo("messages");
+
+    setTimeout(() => {
+      const messagesContainer = document.getElementById("messages-container");
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    }, 100);
+  };
+
+  this.listenToUsers = () => {
+    const usersCollectionRef = collection(this.fb.db, this.paths.users);
+    const q = query(usersCollectionRef);
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        // Update the local state with the latest user data
+        this.state.users = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // Re-render the chat list and active chat views to show updated status
+        if (this.state.currentPage === "messages") {
+          this.render();
+        }
+      },
+      (error) => {
+        console.error("Error listening to users:", error);
+      }
+    );
+
+    // Save the unsubscribe function to the general listeners array
+    this.state.listeners.push(unsubscribe);
+  };
+
+  this.listenToChatMessages = (chatId) => {
+    if (!chatId) return;
+
+    this.detachChatListeners();
+
+    // Reset state for the new chat
+    this.state.allMessagesLoaded = false;
+    this.state.firstVisibleMessage = null;
+    this.state.currentChatMessages = [];
+
+    const q = query(
+      collection(this.fb.db, this.paths.messages(chatId)),
+      orderBy("timestamp", "desc"),
+      limit(15)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        // **THIS IS THE FIX**: We only assume all messages are loaded
+        // if the number of documents returned is LESS than our limit of 15.
+        // If it returns exactly 15, there might be more.
+        this.state.allMessagesLoaded = snapshot.docs.length < 15;
+
+        if (!snapshot.empty) {
+          // Save the oldest message from this batch as our cursor
+          this.state.firstVisibleMessage =
+            snapshot.docs[snapshot.docs.length - 1];
+        }
+
+        // Reverse the array to display chronologically
+        this.state.currentChatMessages = snapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .reverse();
+
+        // Render the UI and then scroll to the bottom
+        this.render();
+        this.postRender(); // Call postRender to handle scrolling
+      },
+      (error) => console.error("Error listening to messages:", error)
+    );
+
+    this.state.chatListeners.push(unsubscribe);
+  };
+
+  // This is the entire loadMoreMessages function for reference
+  this.loadMoreMessages = async () => {
+    if (!this.state.currentChatId || this.state.allMessagesLoaded) return;
+
+    const container = document.getElementById("messages-container");
+    const oldScrollHeight = container.scrollHeight;
+
+    const q = query(
+      collection(this.fb.db, this.paths.messages(this.state.currentChatId)),
+      orderBy("timestamp", "desc"),
+      startAfter(this.state.firstVisibleMessage),
+      limit(10) // <--- CHANGE THIS LINE
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      this.state.firstVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
+
+      const olderMessages = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .reverse();
+      this.state.currentChatMessages = [
+        ...olderMessages,
+        ...this.state.currentChatMessages,
+      ];
+
+      if (snapshot.docs.length < 10) {
+        // <--- AND CHANGE THIS LINE
+        this.state.allMessagesLoaded = true;
+      }
+    } else {
+      this.state.allMessagesLoaded = true;
+    }
+    this.render();
+    setTimeout(() => {
+      const newScrollHeight = container.scrollHeight;
+      container.scrollTop = newScrollHeight - oldScrollHeight;
+    }, 10);
+  };
+
+  this.detachChatListeners = () => {
+    this.state.chatListeners.forEach((unsub) => unsub());
+    this.state.chatListeners = [];
+  };
+
+  // Sends a message in the current chat
+  this.sendMessage = async (e) => {
+    e.preventDefault();
+    const messageText = e.target.elements.messageText.value.trim();
+    if (!messageText || !this.state.currentChatId || !this.state.loggedInUser) {
+      return;
+    }
+
+    // 1. Create a temporary message for an instant UI update.
+    const optimisticMessage = {
+      id: `temp_${Date.now()}`,
+      senderId: this.state.loggedInUser.id,
+      text: messageText,
+      timestamp: Timestamp.now(), // Use local time for immediate display
+    };
+
+    // 2. Add the message to the local state and clear the input field.
+    this.state.currentChatMessages.push(optimisticMessage);
+    e.target.reset();
+
+    // 3. Re-render the UI to show the new message right away.
+    this.render();
+
+    // 4. Scroll to the bottom to view the newly sent message.
+    setTimeout(() => {
+      const messagesContainer = document.getElementById("messages-container");
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    }, 50);
+
+    try {
+      // 5. In the background, send the actual message to the database.
+      const chatRef = doc(
+        this.fb.db,
+        this.paths.chatDoc(this.state.currentChatId)
+      );
+      const messagesCollectionRef = collection(chatRef, "messages");
+
+      await addDoc(messagesCollectionRef, {
+        senderId: this.state.loggedInUser.id,
+        text: messageText,
+        timestamp: Timestamp.now(),
+      });
+
+      // Update the parent chat document with the last message info.
+      await updateDoc(chatRef, {
+        lastMessage: messageText,
+        lastMessageTimestamp: Timestamp.now(),
+      });
+
+      // The real-time listener will automatically refresh the chat
+      // with the final message from the server, replacing the temporary one.
+    } catch (error) {
+      console.error("Error sending message:", error);
+      this.showModal("error", "Message Error", "Failed to send message.");
+
+      // If sending fails, remove the optimistic message from the UI.
+      this.state.currentChatMessages = this.state.currentChatMessages.filter(
+        (msg) => msg.id !== optimisticMessage.id
+      );
+      this.render(); // Re-render to show the message has been removed.
+    }
+  };
+  //UNSEND MESSAGE//
+  this.unsendMessage = (chatId, messageId) => {
+    if (!chatId || !messageId) return;
+
+    this.showModal(
+      "confirm",
+      "Unsend Message?",
+      "This will permanently delete the message. This action cannot be undone.",
+      async () => {
+        try {
+          const messageRef = doc(
+            this.fb.db,
+            this.paths.messages(chatId),
+            messageId
+          );
+          await updateDoc(messageRef, {
+            isRemoved: true,
+            text: "This message was removed.",
+          });
+
+          // NOTE: The real-time listener will automatically update the UI.
+          // For a more advanced implementation, you could update the `lastMessage`
+          // on the parent chat document if this was the last message.
+        } catch (error) {
+          console.error("Error unsending message:", error);
+          this.showModal("error", "Error", "Could not unsend the message.");
+        }
+      }
+    );
+  };
+
+  // Initiates a chat with a specific user from the directory
+  this.startChatWithUser = async (targetUserId) => {
+    const currentUser = this.state.loggedInUser;
+    if (!currentUser || !targetUserId || currentUser.id === targetUserId) {
+      this.showModal("error", "Chat Error", "Cannot start chat.");
+      return;
+    }
+
+    // Check if chat exists
+    const q = query(
+      collection(this.fb.db, this.paths.chats),
+      where("participants", "array-contains", currentUser.id)
+    );
+    const snapshot = await getDocs(q);
+
+    let existingChatId = null;
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (
+        data.participants.includes(targetUserId) &&
+        data.participants.length === 2
+      ) {
+        existingChatId = doc.id;
+      }
+    });
+
+    if (existingChatId) {
+      this.openChat(existingChatId);
+    } else {
+      // Create new chat
+
+      const newChatRef = await addDoc(
+        collection(this.fb.db, this.paths.chats),
+        {
+          participants: [currentUser.id, targetUserId],
+          createdAt: Timestamp.now(),
+          type: "direct",
+          lastMessage: "",
+          lastMessageTimestamp: Timestamp.now(),
+          // --- ADD THIS OBJECT ---
+          unreadCount: {
+            [currentUser.id]: 0,
+            [targetUserId]: 0,
+          },
+        }
+      );
+      this.openChat(newChatRef.id);
+    }
+  };
+
+  // Closes the active chat and returns to the chat list
+  this.closeChat = () => {
+    // Check if there's a chat open and a logged-in user
+    const currentUser = this.state.loggedInUser;
+    const currentChatId = this.state.currentChatId;
+
+    if (currentUser && currentChatId) {
+      const chatRef = doc(this.fb.db, this.paths.chatDoc(currentChatId));
+      // Reset unread count for the current user when they close the chat
+      updateDoc(chatRef, {
+        [`unreadCount.${currentUser.id}`]: 0,
+      }).catch((error) =>
+        console.error("Error resetting unread count:", error)
+      );
+    }
+
+    this.state.currentChatId = null;
+    this.state.currentChatMessages = [];
+    this.detachChatListeners(); // Detach messages listener
+    this.listenToUserChats();
+    this.navigateTo("messages"); // Navigate back to the messages view (which will show the list)
+  };
+
+  // Sends a message in the current chat
+  // In script.js, replace your first 'sendMessage' function with this
+
+  this.sendMessage = async (e) => {
+    e.preventDefault();
+    const messageText = e.target.elements.messageText.value.trim();
+    if (!messageText || !this.state.currentChatId || !this.state.loggedInUser) {
+      return;
+    }
+
+    const optimisticMessage = {
+      id: `temp_${Date.now()}`,
+      senderId: this.state.loggedInUser.id,
+      text: messageText,
+      timestamp: Timestamp.now(),
+    };
+
+    this.state.currentChatMessages.push(optimisticMessage);
+    e.target.reset();
+    this.render();
+
+    setTimeout(() => {
+      const messagesContainer = document.getElementById("messages-container");
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+    }, 50);
+
+    try {
+      const chatRef = doc(
+        this.fb.db,
+        this.paths.chatDoc(this.state.currentChatId)
+      );
+      const messagesCollectionRef = collection(chatRef, "messages");
+
+      await addDoc(messagesCollectionRef, {
+        senderId: this.state.loggedInUser.id,
+        text: messageText,
+        timestamp: Timestamp.now(),
+      });
+
+      // --- START: MODIFIED SECTION ---
+      // Find the current chat to get participant info
+      const currentChat = this.state.chats.find(
+        (c) => c.id === this.state.currentChatId
+      );
+      if (!currentChat) {
+        console.error("Could not find chat to update unread counts.");
+        return;
+      }
+
+      const otherParticipants = currentChat.participants.filter(
+        (pId) => pId !== this.state.loggedInUser.id
+      );
+
+      // Prepare the updates for the parent chat document
+      const updates = {
+        lastMessage: messageText,
+        lastMessageTimestamp: Timestamp.now(),
+      };
+
+      // Increment the unread count for every other participant
+      otherParticipants.forEach((pId) => {
+        updates[`unreadCount.${pId}`] = increment(1);
+      });
+
+      await updateDoc(chatRef, updates);
+      // --- END: MODIFIED SECTION ---
+    } catch (error) {
+      console.error("Error sending message:", error);
+      this.showModal("error", "Message Error", "Failed to send message.");
+
+      this.state.currentChatMessages = this.state.currentChatMessages.filter(
+        (msg) => msg.id !== optimisticMessage.id
+      );
+      this.render();
+    }
+  };
+
+  // Listens to real-time updates for the current user's chats list
+
+  this.listenToUserChats = () => {
+    if (!this.state.loggedInUser) {
+      console.log("No logged in user, skipping chat listener");
+      return;
+    }
+
+    // The .orderBy clause has been removed from this query to prevent the indexing error.
+    const q = query(
+      collection(this.fb.db, this.paths.chats),
+      where("participants", "array-contains", this.state.loggedInUser.id)
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        console.log("Chats snapshot received:", snapshot.docs.length);
+        this.state.chats = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log("Chats updated:", this.state.chats);
+        if (
+          this.state.currentPage === "messages" &&
+          !this.state.currentChatId
+        ) {
+          this.render();
+        }
+      },
+      (error) => {
+        console.error("Error listening to user chats:", error);
+      }
+    );
+
+    this.state.chatListeners.push(unsubscribe);
+  };
+
+  // Detaches all chat-related real-time listeners
+  this.detachChatListeners = () => {
+    this.state.chatListeners.forEach((unsubscribe) => unsubscribe());
+    this.state.chatListeners = [];
+  };
+
+  // Helper to format timestamps for display
+  this.formatTimestamp = (timestamp, includeTime = false) => {
+    if (!timestamp) return "";
+    const date = timestamp.toDate();
+    const options = { month: "short", day: "numeric" };
+    if (includeTime) {
+      options.hour = "2-digit";
+      options.minute = "2-digit";
+      options.hour12 = true;
+    }
+    return date.toLocaleString("en-US", options);
+  };
+
+  // Helper to format timestamps for relative time
+  this.formatRelativeTime = (timestamp) => {
+    if (!timestamp || !timestamp.toDate) return "never";
+    const now = new Date();
+    const date = timestamp.toDate();
+    const seconds = Math.floor((now - date) / 1000);
+
+    let interval = seconds / 31536000;
+    if (interval > 1) return `${Math.floor(interval)}y ago`;
+    interval = seconds / 2592000;
+    if (interval > 1) return `${Math.floor(interval)}mo ago`;
+    interval = seconds / 86400;
+    if (interval > 1) return `Offline`; // Simplified for clarity
+    interval = seconds / 3600;
+    if (interval > 1) return `${Math.floor(interval)}h ago`;
+    interval = seconds / 60;
+    if (interval > 1) return `${Math.floor(interval)}m ago`;
+    return "Online"; // If less than a minute, assume online
+  };
+
+  
 
   //FETCH ANNOUNCEMENT
   this.fetchAnnouncements = async () => {

@@ -733,7 +733,7 @@ body.theme-rainbow2 .reward-box-claimable { background-color: #16a34a !important
 .action-menu-toggle {
   width: 100%;
   height: 100%;
-  background-color: #d8db00; /* Your app's primary green */
+  background-color: #f0ec00; /* Your app's primary green */
   color: white;
   border-radius: 50%;
   display: flex;
